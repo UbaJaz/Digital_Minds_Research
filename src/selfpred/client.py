@@ -461,16 +461,24 @@ class OpenRouterClient:
                 self.guard.commit(-amount)
 
     def _post_with_retry(
-        self, path: str, body: dict[str, Any], *, attempts: int = 3
+        self, path: str, body: dict[str, Any], *, attempts: int = 7
     ) -> tuple[dict[str, Any], int]:
-        """Transport retry only. The body — model id and provider pin — is never mutated."""
+        """Transport retry only. The body — model id and provider pin — is never mutated.
+
+        Backoff is exponential with jitter, because the realistic failure is a *shared*
+        upstream overload: every worker in the pool gets 429 at the same instant, and a
+        short flat retry just re-synchronises them into the same wall. Jitter spreads them
+        out; the long tail (up to ~60 s) rides out a provider hiccup rather than aborting a
+        run that is expensive to redo. Retrying never re-routes — switching provider or
+        model to escape a 429 would break the same-weights precondition.
+        """
         last: tuple[dict[str, Any], int] = ({}, 0)
         for i in range(attempts):
             try:
                 resp = self._client.post(path, json=body)
             except httpx.HTTPError as exc:
                 last = ({"error": redact(str(exc))}, 0)
-                time.sleep(1.5 * (i + 1))
+                time.sleep(_backoff(i))
                 continue
             try:
                 payload = resp.json()
@@ -478,7 +486,7 @@ class OpenRouterClient:
                 payload = {"error": {"message": redact(resp.text[:400])}}
             if resp.status_code == 429 or 500 <= resp.status_code < 600:
                 last = (payload, resp.status_code)
-                time.sleep(2.0 * (i + 1))
+                time.sleep(_backoff(i))
                 continue
             return payload, resp.status_code
         return last
@@ -554,6 +562,13 @@ class OpenRouterClient:
 # --------------------------------------------------------------------------------------
 # helpers
 # --------------------------------------------------------------------------------------
+
+
+def _backoff(attempt: int, *, base: float = 3.0, cap: float = 60.0) -> float:
+    """Exponential backoff with full jitter, capped."""
+    import random
+
+    return random.uniform(0.0, min(cap, base * (2 ** attempt)))
 
 
 def _flatten(messages: Sequence[dict[str, str]]) -> str:

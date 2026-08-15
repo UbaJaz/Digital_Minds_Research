@@ -373,13 +373,174 @@ def _unpaired(a, b, prompt_of):
                           log_odds=None, mcnemar_p=None, n_items=len(ia) + len(ib), n_prompts=len(pa) + len(pb))
 
 
-STAGES = [("C", stage_c), ("D", stage_d), ("FREEZE", stage_freeze), ("E", stage_e), ("ANALYSIS", stage_analysis)]
+# ======================================================================================
+# Phase E2 — the crossed design on TWO stimulus sets (02 amendment A4)
+# ======================================================================================
+#
+# The pilot produced one leaky pair (VO-C, D = 0.650 on M) and one clean pair
+# (VO-D, D = 0.325 on M). Running the full crossed 2x2 on both turns surface leakage into a
+# manipulated variable: style-matching predicts a self-advantage on VO-C that disappears on
+# VO-D; privileged access predicts it survives on VO-D. Main prompts are disjoint from the
+# pilot prompts, so the stimulus sets were selected on data these cells do not reuse.
+
+E2_PAIRS = ("VO-C", "VO-D")
+
+
+def stage_e2(pair_ids: tuple[str, ...] = E2_PAIRS, n_prompts: int = 200) -> None:
+    done = list(state().get("E2_done", []))
+    book = price_book()
+    prompts = load_prompts("prompts_main.json")[:n_prompts]
+    effective_far()
+    log(f"E2: {len(prompts)} main prompts x 2 personas per column; pairs {pair_ids}")
+    for pid in pair_ids:
+        if pid in done:
+            log(f"E2: {pid} already done"); continue
+        pair = next(p for p in candidate_pairs() if p.pair_id == pid)
+        tag = f"_main_{pid}"
+        for col in ("M", "N"):
+            spec = config.model(col)
+            log(f"E2 {pid}: generating column {col} ({len(prompts)}x2) on {spec.model_id}")
+            generate_column(column=col, generator_model_id=spec.model_id,
+                            generator_provider=spec.provider, prompts=prompts, pair=pair,
+                            price_book=book, phase="generation",
+                            labels_dir=config.LABELS_DIR, run_tag=tag)
+        for cell in config.ALL_CELLS:
+            cd = load_column(cell.target, run_tag=tag, labels_dir=config.LABELS_DIR)
+            items = [GeneratedItem(i, cd.prompt_of[i], cell.target, cd.texts[i]) for i in cd.texts]
+            log(f"E2 {pid}: predicting {cell.name} ({len(items)} items)")
+            run_cell(cell=cell, items=items, persona_keys=pair.keys, persona_clauses=pair.clauses,
+                     price_book=book, phase="prediction", run_tag=tag)
+        done.append(pid)
+        save_state(E2_done=done)
+        log(f"E2 {pid} done. Spend ${spend():.4f}")
+
+
+def _discrimination(pair_id: str, cell_name: str) -> float | None:
+    """Share of prompts where the predictor gave BOTH responses the same persona label."""
+    path = config.GENERATED_DIR / f"predictions_{cell_name.replace('->', '_to_')}_main_{pair_id}.jsonl"
+    if not path.exists():
+        return None
+    by: dict[str, list[str]] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        r = json.loads(line)
+        if not r.get("chosen_letter"):
+            continue
+        pred = r["option_a_persona"] if r["chosen_letter"] == "A" else r["option_b_persona"]
+        by.setdefault(r["source_prompt_id"], []).append(pred)
+    pairs = [v for v in by.values() if len(v) == 2]
+    return (sum(1 for v in pairs if v[0] == v[1]) / len(pairs)) if pairs else None
+
+
+def stage_analysis2(pair_ids: tuple[str, ...] = E2_PAIRS) -> None:
+    """Pre-specified analysis from 02 amendment A4. Reports every cell of both sets."""
+    out: dict = {"pairs": {}}
+    per_set_selfadv: dict[str, dict] = {}
+    for pid in pair_ids:
+        pair = next(p for p in candidate_pairs() if p.pair_id == pid)
+        tag = f"_main_{pid}"
+        cols = {c: load_column(c, run_tag=tag, labels_dir=config.LABELS_DIR) for c in ("M", "N")}
+        prompt_of = {**cols["M"].prompt_of, **cols["N"].prompt_of}
+        scores, cells = {}, {}
+        for cell in config.ALL_CELLS:
+            sc = score_cell(cell, cols[cell.target], run_tag=tag)
+            scores[cell.name] = sc.correct
+            acc, lo, hi = accuracy_ci(sc.correct, cols[cell.target].prompt_of)
+            cells[cell.name] = {
+                "acc": acc, "lo": lo, "hi": hi, "n": len(sc.correct),
+                "n_malformed": sc.n_malformed, "a_share": sc.a_share,
+                "provider_ok_for_self": sc.provider_ok_for_self,
+                "same_persona_both": _discrimination(pid, cell.name),
+            }
+            log(f"  {pid} {cell.name}: {acc:.3f} [{lo:.3f},{hi:.3f}] n={len(sc.correct)}")
+        d_per_col = {}
+        for c in ("M", "N"):
+            cd = cols[c]; usable = sorted(cd.usable)
+            d = fit_baseline_cv(target_column=c, item_ids=usable,
+                                texts=[cd.texts[i] for i in usable],
+                                labels=[int(cd.labels[i].persona_key == pair.key_b) for i in usable],
+                                groups=[cd.prompt_of[i] for i in usable])
+            d_per_col[c] = d.accuracy
+            log(f"  {pid} baseline D column {c}: {d.accuracy:.3f}")
+        self_adv = paired_bootstrap_diff(scores["M->M"], scores["N->M"], prompt_of,
+                                         name=f"{pid}: M->M - N->M")
+        inter = interaction_bootstrap_joint(m_on_m=scores["M->M"], n_on_m=scores["N->M"],
+                                            m_on_n=scores["M->N"], n_on_n=scores["N->N"],
+                                            prompt_of=prompt_of)
+        near_far = paired_bootstrap_diff(scores["N->M"], scores["F->M"], prompt_of,
+                                         name=f"{pid}: N->M - F->M")
+        self_far = paired_bootstrap_diff(scores["M->M"], scores["F->M"], prompt_of,
+                                         name=f"{pid}: M->M - F->M")
+        out["pairs"][pid] = {
+            "cells": cells, "baseline_d": d_per_col,
+            "self_vs_near": _ci(self_adv), "interaction": _ci(inter),
+            "near_vs_far": _ci(near_far), "self_vs_far": _ci(self_far),
+        }
+        per_set_selfadv[pid] = {"scores": scores, "prompt_of": prompt_of}
+        log(f"  {pid} self-adv (M->M - N->M) = {self_adv.diff}; interaction = {inter.diff}")
+
+    # ---- PRIMARY: leakage contrast across the two stimulus sets -----------------------
+    if len(pair_ids) == 2:
+        a, b = pair_ids
+        out["primary_leakage_contrast"] = _cross_set_selfadv(per_set_selfadv[a], per_set_selfadv[b], a, b)
+        log(f"  PRIMARY leakage contrast ({a} - {b}): {out['primary_leakage_contrast']}")
+    (RESULTS / "main_two_set.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
+    save_state(ANALYSIS2_done=True)
+    log("ANALYSIS2 done -> data/results/main_two_set.json")
+
+
+def _ci(res) -> dict:
+    return {"point": res.diff.point, "lo": res.diff.lo, "hi": res.diff.hi,
+            "n_items": res.n_items, "n_prompts": res.n_prompts,
+            "mcnemar_p": res.mcnemar_p,
+            "log_odds": None if res.log_odds is None else
+                        {"point": res.log_odds.point, "lo": res.log_odds.lo, "hi": res.log_odds.hi}}
+
+
+def _cross_set_selfadv(set_a: dict, set_b: dict, name_a: str, name_b: str) -> dict:
+    """[(M->M - N->M) in set A] - [(M->M - N->M) in set B], sets resampled independently."""
+    import numpy as np
+    from selfpred.analysis.stats import _prompt_index, _resample_positions
+
+    def prep(s):
+        shared = sorted(set(s["scores"]["M->M"]) & set(s["scores"]["N->M"]))
+        mm = np.asarray([s["scores"]["M->M"][i] for i in shared], float)
+        nm = np.asarray([s["scores"]["N->M"][i] for i in shared], float)
+        prompts, by = _prompt_index(shared, s["prompt_of"])
+        return mm, nm, prompts, by
+
+    mma, nma, pa, bya = prep(set_a)
+    mmb, nmb, pb, byb = prep(set_b)
+    rng = np.random.default_rng(config.BOOTSTRAP_SEED)
+    boot = np.empty(10_000)
+    for k in range(10_000):
+        ia = _resample_positions(pa, bya, rng)
+        ib = _resample_positions(pb, byb, rng)
+        boot[k] = (mma[ia].mean() - nma[ia].mean()) - (mmb[ib].mean() - nmb[ib].mean())
+    point = float((mma.mean() - nma.mean()) - (mmb.mean() - nmb.mean()))
+    lo, hi = np.quantile(boot, [0.025, 0.975])
+    return {"name": f"self-advantage({name_a}) - self-advantage({name_b})",
+            "point": point, "lo": float(lo), "hi": float(hi),
+            "self_adv_a": float(mma.mean() - nma.mean()),
+            "self_adv_b": float(mmb.mean() - nmb.mean())}
+
+
+STAGES = [("C", stage_c), ("D", stage_d), ("FREEZE", stage_freeze), ("E", stage_e),
+          ("ANALYSIS", stage_analysis), ("E2", stage_e2), ("ANALYSIS2", stage_analysis2)]
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(); ap.add_argument("--until", default="ANALYSIS"); a = ap.parse_args()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--until", default="ANALYSIS")
+    ap.add_argument("--only", default="", help="comma-separated stage names to run alone")
+    ap.add_argument("--e2-prompts", type=int, default=200)
+    a = ap.parse_args()
+    only = [s.strip() for s in a.only.split(",") if s.strip()]
     for name, fn in STAGES:
+        if only and name not in only:
+            continue
         log(f"=== stage {name} ===")
-        fn()
-        if name == a.until:
+        fn(n_prompts=a.e2_prompts) if name == "E2" else fn()
+        if not only and name == a.until:
             break
     log(f"pipeline finished through {a.until}; total spend ${spend():.4f}")

@@ -221,6 +221,42 @@ Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effecti
   **Status:** taken under the stop rule declared in A1 before `VO-D` was run. Awaiting Jaswin's
   confirmation.
 
+- **A4 — Crossed design run on TWO stimulus sets as a leakage manipulation (2026-08-15).**
+  **What changed:** A3 said no main run. That is reversed: the crossed 2×2 *is* run, but on two
+  stimulus sets rather than on one "winning" pair, because the pilot handed us something better
+  than a pair that passes the band — a pair that leaks (`VO-C`, D = 0.650 on M) and a pair that
+  does not (`VO-D`, D = 0.325 on M). Surface leakage becomes a manipulated variable instead of a
+  nuisance that disqualified the study.
+  **Reason:** the locked design asks whether a self-prediction residual survives a capability
+  control. The pilot says the recoverable signal is surface style. Running the crossed design on
+  both sets tests the two accounts against each other directly: under the *style-matching*
+  account (Song et al.) any self-advantage is a similarity artifact and should appear on `VO-C`
+  and vanish on `VO-D`; under the *privileged-access* account (Binder et al.) a self-advantage
+  should survive on `VO-D`, where no surface cue remains.
+  **Pre-specified analysis, declared before the cells were run:**
+  - **Primary:** the leakage contrast — [(M→M − N→M) on `VO-C`] − [(M→M − N→M) on `VO-D`].
+    Style-matching predicts **> 0**; privileged access predicts **≈ 0**.
+  - **Secondary (per stimulus set):** the capability-controlled interaction
+    (M→M − N→M) − (M→N − N→N); the three M-column pairwise contrasts; all six cell accuracies
+    with prompt-clustered bootstrap CIs; Baseline D per column; A-share position-bias per cell;
+    within-prompt discrimination rate per cell.
+  - CIs are prompt-clustered bootstrap resampling source prompts. Cross-set contrasts resample
+    the two sets independently (different items). SESOI stays 5 pp simple / 8 pp interaction;
+    at the n actually achieved a null is reported as whatever equivalence bound the data support,
+    stated explicitly rather than rounded to the pre-registered figure.
+  - **Interpretation guard:** if *no* predictor beats chance on `VO-D`, the interaction there is
+    undefined and **no self-advantage claim is made in either direction** — the reported result
+    is that removing surface style removes the recoverable signal for every predictor alike.
+  **What did NOT change:** M/N/F and their pins, the predictor prompt (P12), exclusion rules
+  (P11), generation temperature (P6), both-personas-per-prompt (P10), prompt-clustered
+  resampling (P7), D's feature set, and the ban on D as a similarity point.
+  **Disclosure:** this is a post-pilot decision made after seeing the pilot results, and the
+  stimulus sets were selected *because* of their D values. The analysis above was written down
+  before the new cells were run, and all six cells of both sets are reported whatever they show.
+  **Status:** proposed by Claude Code, run under time pressure on 2026-08-15. **Awaiting
+  Jaswin's confirmation**, and the write-up states that this contrast was specified after the
+  pilot rather than before it.
+
 - **A2 — `load_column` prompt-subset filter (2026-08-15, bug fix, no research content).**
   `_pilot_column` loaded every item present in a column's checkpoint regardless of which prompts
   the call requested, so on a *resumed* run the 20-prompt screen silently read the 80 items the

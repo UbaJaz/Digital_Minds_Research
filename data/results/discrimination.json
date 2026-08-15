@@ -1,0 +1,50 @@
+{
+  "VO-A-M": {
+    "n_prompts_with_both": 40,
+    "same_persona_for_both": 30,
+    "same_rate": 0.75,
+    "discriminated": 10
+  },
+  "VO-A-N": {
+    "n_prompts_with_both": 40,
+    "same_persona_for_both": 32,
+    "same_rate": 0.8,
+    "discriminated": 8
+  },
+  "VO-B-M": {
+    "n_prompts_with_both": 40,
+    "same_persona_for_both": 28,
+    "same_rate": 0.7,
+    "discriminated": 12
+  },
+  "VO-B-N": {
+    "n_prompts_with_both": 40,
+    "same_persona_for_both": 26,
+    "same_rate": 0.65,
+    "discriminated": 14
+  },
+  "VO-C-M": {
+    "n_prompts_with_both": 40,
+    "same_persona_for_both": 26,
+    "same_rate": 0.65,
+    "discriminated": 14
+  },
+  "VO-C-N": {
+    "n_prompts_with_both": 40,
+    "same_persona_for_both": 20,
+    "same_rate": 0.5,
+    "discriminated": 20
+  },
+  "VO-D-M": {
+    "n_prompts_with_both": 40,
+    "same_persona_for_both": 38,
+    "same_rate": 0.95,
+    "discriminated": 2
+  },
+  "VO-D-N": {
+    "n_prompts_with_both": 40,
+    "same_persona_for_both": 38,
+    "same_rate": 0.95,
+    "discriminated": 2
+  }
+}

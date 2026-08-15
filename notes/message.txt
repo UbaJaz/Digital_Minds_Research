@@ -1,0 +1,92 @@
+## Verification Checklist
+
+### OpenAI
+
+1. Log into platform.openai.com under the account holding the project's budget; confirm the API key is active and has a positive balance.
+2. Open the model list via the API (not just the marketing pages) and confirm the exact candidate model IDs (e.g. `gpt-5.6-terra`, `gpt-5.6-luna`) appear as available under your usage tier.
+3. Send one minimal test call to each candidate model (a prompt like "reply with the single word OK") and confirm success; capture the exact model ID string the API returns in the response metadata.
+4. Check whether a dated, pinned snapshot exists for each candidate (not just a rolling alias) and record the exact snapshot ID if so.
+5. Confirm `reasoning.effort: none` (or equivalent) is accepted and check that no hidden reasoning tokens are being billed when it's set.
+6. Check your current rate limits (requests/minute, tokens/minute) against the ~1,000+ short calls the sprint will need, to rule out throttling mid-run.
+7. Test the actual constrained-output prompt format ("reply with exactly one letter: A or B") against each candidate and confirm it reliably returns just the label, not extra text.
+8. Note the per-token price shown in **your own dashboard**, not a third-party aggregator — this removes any residual pricing discrepancy risk.
+9. Set a hard spend cap in the OpenAI project settings itself, as a second line of defense beyond anything enforced in code later.
+
+### Google
+
+1. Log into Google AI Studio / Cloud console under the account you'll use; confirm an active API key and decide explicitly whether you're running on the free tier (rate-limited, and free-tier content may be used by Google to improve their products — worth being aware of for a research project) or a paid tier.
+2. Confirm the exact candidate model IDs (e.g. `gemini-3.6-flash`, `gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`) are available to your key and region.
+3. Send one minimal test call to each and record the exact model ID/version string returned.
+4. Check whether a dated pinned snapshot is available alongside any rolling alias, and record it if so.
+5. Confirm current rate limits (RPM/TPM/RPD) are sufficient for the trial volume within the sprint window.
+6. Test the constrained single-label prompt directly — Gemini models sometimes wrap answers in extra formatting by default, so verify this and adjust generation config (e.g. a response schema or stop sequence) if needed.
+7. Note the per-token price from your own billing dashboard, not an aggregator.
+8. Set a budget alert/cap on the Google Cloud billing console.
+
+### Shared, either provider
+
+- Log every verified model ID, snapshot date, and confirmed price directly into the project's reproducibility record — start this now, during verification, not later during implementation.
+- Total up the cost of the verification test calls themselves against the ~$10 budget; they should be negligible, but count them.
+
+---
+
+## Candidate Configurations (currently-live models only)
+
+### Configuration 1 — OpenAI-anchored
+
+**Target: GPT-5.6 Terra** ($2/$12) · **Near-Self: GPT-5.6 Luna** ($0.20/$1.20) · **Far-Self: Gemini 3.5 Flash-Lite** ($0.30/$2.50)
+
+- **Family relationship:** Terra and Luna are both GPT-5.6-generation models — a genuine same-generation, same-training-lineage pair, differing mainly in scale/cost tier. This is the strongest literal "same family" claim of the three.
+- **Capability gap:** roughly 10x price difference between Terra and Luna — a real, sizeable capability/tier gap. This is the main risk: Luna may diverge from Terra simply because it's a smaller model, not because of anything else.
+- **Reproducibility:** OpenAI has previously shown dated snapshot pinning (`gpt-5.4-mini-2026-03-17`-style IDs) — needs confirming this pattern extends to the 5.6 family via the checklist above.
+- **Structured output:** OpenAI's Responses API supports structured/constrained output generally; for this task a plain constrained-label prompt is sufficient and avoids added complexity.
+- **Cost:** cheapest of the three configurations — Luna in particular is inexpensive enough to absorb a large trial volume without strain.
+- **Methodological risk:** the near/far distinction here is partly confounded with a capability-tier distinction, not purely a "family" distinction — exactly the kind of thing the calibration probe exists to catch, not something to resolve by assumption.
+
+### Configuration 2 — Google-anchored
+
+**Target: Gemini 3.6 Flash** ($1.50/$7.50) · **Near-Self: Gemini 3.5 Flash-Lite** ($0.30/$2.50) · **Far-Self: GPT-5.6 Terra** ($2/$12)
+
+- **Family relationship:** Gemini 3.6 Flash and 3.5 Flash-Lite are adjacent but not identical generations (3.6 vs. 3.5) — a slightly weaker "same family" claim than Configuration 1's same-generation pairing, though still clearly within one product line.
+- **Capability gap:** roughly 5x price difference — somewhat smaller than Configuration 1's gap, a modest advantage.
+- **Reproducibility:** needs the same dated-snapshot confirmation via the checklist; not yet verified either way.
+- **Structured output:** Gemini's API supports response schemas; worth testing directly since Flash models can default to wrapping answers in extra text.
+- **Cost:** moderate — slightly more expensive than Configuration 1 overall.
+- **Methodological risk:** same tier-vs-family confound as Configuration 1, smaller in magnitude; the cross-generation near-self pairing is a minor additional wrinkle worth naming.
+
+### Configuration 3 — Anthropic-anchored
+
+**Target: Claude Sonnet 5** ($2/$10 through Aug 31, then $3/$15) · **Near-Self: Claude Haiku 4.5** ($1/$5) · **Far-Self: GPT-5.6 Terra or Gemini 3.6 Flash**
+
+- **Family relationship:** this is the weakest "same family" claim of the three — Sonnet 5 and Haiku 4.5 don't even share a generation number in their naming, and I have not verified whether they share meaningful training lineage beyond both being current Claude models. This should not be assumed; flag it explicitly rather than treat "same company" as equivalent to "same family," which is precisely the assumption the source of truth warns against.
+- **Capability gap:** Haiku 4.5 is positioned as a genuine budget/fast tier relative to Sonnet 5 — a real gap, magnitude not yet precisely quantified here.
+- **Reproducibility:** Anthropic model IDs already include dated snapshots in their naming convention (e.g. `claude-haiku-4-5-20251001`), which is a genuine reproducibility advantage over the other two configurations if it holds for Sonnet 5 too.
+- **Structured output:** supported via the standard Claude tool-use surface; a plain constrained-label prompt is sufficient here as well.
+- **Cost:** the most expensive of the three on the target side (Sonnet 5 at $2–3/$10–15), though still affordable at the trial volumes involved.
+- **Methodological risk:** highest of the three, specifically because the family relationship is the least literal — worth treating this configuration as a fallback rather than the first choice unless the calibration probe itself ends up favoring it.
+
+**None of these should be treated as chosen.** Each is executable and worth verifying via the checklist; which one actually shows a defensible near/far ordering is an empirical question the calibration probe answers, not something to decide from the table above.
+
+---
+
+## Phase 1C — Calibration Probe Design (not run yet)
+
+**Goal:** measure Agreement(Target, Near) vs. Agreement(Target, Far) on a task that has nothing to do with the persona hidden-property task, to get an empirical similarity ordering before any configuration is locked.
+
+**Task type:** a set of short, genuinely-somewhat-subjective forced-choice judgments — e.g., "Which of these two sentences reads as more formal: A or B?" or "Which of these two short descriptions is more persuasive: A or B?" — chosen because a task with an objectively correct answer (like arithmetic) would push every model toward near-100% agreement regardless of similarity, giving no discriminative power. The dimension judged must be unrelated in content to persona or identity, so it can't be contaminated by anything from the main experiment.
+
+**Number of items:** propose 30 items as the MVP, each a fixed pair of short text snippets, generated once and frozen — the same 30 items shown to every candidate predictor, so agreement is measured on identical stimuli. Extendable to ~50 if time and budget allow, but 30 should already give a usable signal at low cost.
+
+**Prompt template (fixed across models):** "Here are two short pieces of text, labeled A and B. [text A] [text B] Which one is more [dimension]? Reply with exactly one letter: A or B. Do not explain your answer." Temperature 0, reasoning off, for determinism and to keep cost predictable.
+
+**Randomization:** randomize which snippet is labeled A vs. B independently per item, to remove positional bias as a confound. The 30-item set itself is fixed once generated, not regenerated per model.
+
+**Scoring / agreement definition:** for each item, record each candidate's label. Agreement(Model X, Target) = proportion of the 30 items where X's label matches Target's label. Compute this for Near and for Far separately.
+
+**Expected output format:** a single character, A or B, nothing else. If a model returns anything else, re-prompt once; if it fails a second time, exclude that item for that model and log it — decide this rule now, not while looking at results.
+
+**Analysis:** report Agreement(Target, Near) and Agreement(Target, Far) each with a bootstrap or exact binomial confidence interval, plus their difference and its CI.
+
+**Minimum evidence needed to justify a Near > Far ordering (proposed, not locked):** the gap between Agreement(Target, Near) and Agreement(Target, Far) should exceed some pre-declared margin — for example, at least 10 percentage points with non-overlapping confidence intervals — before the near/far labels are treated as validated. If the gap is smaller or the intervals overlap substantially, the honest conclusion is that this configuration's similarity ordering wasn't confirmed, and the team should either try a different pairing or report that finding plainly rather than proceed as if the labels were earned. This threshold is a proposal for you two to confirm or adjust — it is not yet locked, consistent with how the pilot-feasibility threshold was handled earlier.
+
+**Not run or implemented in this document.** This is the design only — execution is the next step, once the verification checklist above is actually completed against real API access.

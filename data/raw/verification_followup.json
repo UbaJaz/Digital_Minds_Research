@@ -1,0 +1,21 @@
+{
+ "google/gemini-3.5-flash-lite": {
+  "malformed_rate_at_16_tokens": 0.0,
+  "samples": []
+ },
+ "deepseek/deepseek-chat-v3-0324": {
+  "malformed_rate_at_16_tokens": 0.0,
+  "samples": []
+ },
+ "mistralai/mistral-small-3.2-24b-instruct": {
+  "malformed_rate_at_16_tokens": 0.0,
+  "samples": []
+ },
+ "tier_i_alternative": {
+  "pair": [
+   "meta-llama/llama-3.1-70b-instruct",
+   "nousresearch/hermes-4-70b"
+  ],
+  "shared_providers": []
+ }
+}

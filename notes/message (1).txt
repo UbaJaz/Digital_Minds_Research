@@ -1,0 +1,263 @@
+Absolutely. **The $10 is a hard constraint**, and I would make that explicit in every model decision from this point onward. 
+
+More importantly, after seeing the updated Claude audit you pasted, I would **change one thing from my previous advice**: don't think of the $10 as "$8 for the experiment plus $2 contingency" yet. We should budget the entire research pipeline first.
+
+## How I would allocate the $10
+
+We have roughly:
+
+| Stage            | Purpose                                      |       Budget target |
+| ---------------- | -------------------------------------------- | ------------------: |
+| API verification | A few test calls                             |          **<$0.10** |
+| Calibration      | 30 to 50 items × 3 models                    |    **~$0.25 to $1** |
+| Persona pilot    | Test whether task is viable                  | **~$0.50 to $1.50** |
+| Main experiment  | ~250 to 300 × 4 conditions                   |       **~$5 to $7** |
+| Safety buffer    | Retries, malformed outputs, unexpected usage |    **~$1.50 to $3** |
+
+So I would set our **research spending ceiling at $10**, but aim to make the main experiment fit comfortably below it.
+
+The exact numbers need to be calculated once we know the actual prompts and token lengths.
+
+---
+
+# The $10 changes how I'd choose the models
+
+Looking at the three configurations Claude documented:
+
+### Configuration 1
+
+**GPT 5.6 Terra**
+→ Target
+
+**GPT 5.6 Luna**
+→ Near
+
+**Gemini 3.5 Flash Lite**
+→ Far
+
+This is the one I'd investigate first.
+
+The reason isn't simply "it's cheapest."
+
+It's that **Luna is extremely cheap relative to Terra**, so we can afford a lot of calibration and experimental calls without blowing the budget.
+
+The risk is the capability gap:
+
+> Terra → Luna might be so large that "same family" isn't enough to produce behavioral similarity.
+
+But that's exactly what our calibration experiment is designed to test.
+
+---
+
+# I would NOT use Claude as the target right now
+
+Claude's Configuration 3 is interesting scientifically, but with a $10 budget, I don't see a reason to spend our scarce budget there.
+
+Its target is substantially more expensive, and the family relationship between Sonnet 5 and Haiku 4.5 is also less clean according to the audit. 
+
+So:
+
+**Claude = backup candidate, not our first choice.**
+
+---
+
+# And I agree with Claude's calibration proposal
+
+The 30 item calibration probe is exactly the kind of thing we need.
+
+But there's one detail I'd modify.
+
+Don't make it:
+
+> "Which sentence is more formal?"
+
+if our target models are highly capable enough that they all agree 95% of the time.
+
+We want a task that is:
+
+**subjective enough to expose behavioral differences, but structured enough to score objectively.**
+
+The important thing is that the **stimuli are frozen before we run the models**.
+
+Then:
+
+```text
+Target → 30 decisions
+Near   → same 30 decisions
+Far    → same 30 decisions
+```
+
+and calculate:
+
+[
+A_{near} = \frac{\text{Near decisions matching Target}}{30}
+]
+
+[
+A_{far} = \frac{\text{Far decisions matching Target}}{30}
+]
+
+Then:
+
+[
+\Delta_{similarity} = A_{near} - A_{far}
+]
+
+That's our empirical similarity signal.
+
+---
+
+# But 30 items has a limitation
+
+30 is good for a **cheap MVP calibration**, but don't fool ourselves into thinking it gives extremely precise estimates.
+
+One item is:
+
+[
+\frac{1}{30}=3.33%
+]
+
+So if Near gets 23/30 and Far gets 20/30:
+
+```text
+Near = 76.7%
+Far  = 66.7%
+Δ    = 10 percentage points
+```
+
+That's interesting, but the sample is small.
+
+If we have enough budget, I'd prefer:
+
+**50 calibration items.**
+
+The extra 20 items cost almost nothing compared with the main experiment.
+
+So I'd make:
+
+> **30 = minimum**
+> **50 = preferred**
+
+provided the actual token cost remains comfortably below our $10 ceiling.
+
+---
+
+# One thing I would NOT lock yet
+
+Claude proposes:
+
+> "at least 10 percentage points with non overlapping confidence intervals"
+
+as the criterion for accepting Near > Far.
+
+I **would not lock that yet**.
+
+That's a reasonable candidate criterion, but there's a statistical issue: non overlapping CIs are a pretty conservative and somewhat awkward decision rule for comparing two dependent agreement rates because both are being measured against the **same Target decisions**.
+
+The cleaner eventual analysis should account for the paired nature of the calibration items.
+
+We can decide that properly when we design the calibration analysis.
+
+So mark:
+
+**10 percentage points + non overlapping CIs = PROPOSED, NOT LOCKED.**
+
+---
+
+# The $10 also means we should avoid unnecessary output
+
+This is important.
+
+Every model should basically answer:
+
+```text
+A
+```
+
+or
+
+```text
+B
+```
+
+No explanations.
+
+No chain of thought.
+
+No long responses.
+
+No "Here is my reasoning".
+
+That gives us:
+
+* lower cost
+* lower variance
+* cleaner data
+* easier parsing
+* less opportunity for contamination
+
+And it makes the experiment much easier to reproduce.
+
+---
+
+# Where we are now
+
+Your research state is now:
+
+```text
+01 Literature grounding       ✅
+02 Design audit               ✅
+03 Model/API audit            ✅
+                               
+Model candidates              🟡
+API access verification       ⬅ NEXT
+Budget validation             ⬅ NEXT
+                               
+Calibration design            🟡
+Calibration execution         ⬜
+Persona design                ⬜
+Persona pilot                 ⬜
+Main experiment               ⬜
+```
+
+So **we have not moved into implementation yet**.
+
+That's good.
+
+---
+
+# The next thing I want you to do
+
+Since the $10 is confirmed, tell Claude:
+
+> **"The total available API budget for this entire research project is strictly $10. Treat this as a hard constraint, not an approximate budget. Rework the candidate model configurations and calibration plan around this constraint. Estimate worst case and expected token costs for verification, 30/50 item calibration, persona pilot, and 250 to 300 trials per condition. Do not assume unlimited calls. Include retry costs and malformed output costs. Recommend the configuration that gives us the strongest methodological design while remaining safely under $10. Do not implement anything yet."**
+
+That's the next move.
+
+And I would add one more requirement:
+
+> **"Give us a hard maximum number of API calls and maximum input/output tokens we can afford for each phase before we start."**
+
+That way, when we eventually code, we can literally have:
+
+```text
+PROJECT_BUDGET = $10.00
+CALIBRATION_BUDGET = ...
+PILOT_BUDGET = ...
+MAIN_EXPERIMENT_BUDGET = ...
+RESERVE = ...
+```
+
+and the program can refuse to make calls once we're approaching the limit.
+
+That is much better than discovering at 11 PM on Day 2 that the experiment has consumed $12.
+
+## So the immediate sequence is
+
+**1. Verify actual API access.**
+**2. Recalculate the entire experiment around the $10 ceiling.**
+**3. Lock Target / Near / Far.**
+**4. Run the calibration probe.**
+**5. Only if the Near > Far ordering is validated, move to the persona pilot.**
+
+We are **one decision away from actually collecting our first research data**.

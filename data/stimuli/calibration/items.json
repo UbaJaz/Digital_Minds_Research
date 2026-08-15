@@ -1,0 +1,306 @@
+{
+  "question": "Here are two versions of the same sentence.\n\nA: {a}\n\nB: {b}\n\nWhich one reads better? Reply with exactly one letter: A or B. Do not explain.",
+  "seed": 20260816,
+  "items": [
+    {
+      "item_id": "cal-001",
+      "text_a": "The meeting was moved to Thursday because the room was double-booked.",
+      "text_b": "Because the room was double-booked, the meeting has been moved to Thursday.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-002",
+      "text_a": "Although she finished the report late, it was thorough.",
+      "text_b": "She finished the report late but it was thorough.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-003",
+      "text_a": "We should probably leave now if we want to catch the train.",
+      "text_b": "If we want to catch the train, we should probably leave now.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-004",
+      "text_a": "The new café on the corner does a decent flat white.",
+      "text_b": "The flat white at the new corner café is decent.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-005",
+      "text_a": "Having forgotten his umbrella, he got soaked on the walk home.",
+      "text_b": "He forgot his umbrella and got soaked walking home.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-006",
+      "text_a": "The library closes early on Fridays during the summer.",
+      "text_b": "During the summer, the library closes early on Fridays.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-007",
+      "text_a": "I think the blue paint would look better in the hallway.",
+      "text_b": "The hallway would look better in the blue paint, I think.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-008",
+      "text_a": "They cancelled the picnic since rain was forecast.",
+      "text_b": "The picnic was cancelled because rain was forecast.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-009",
+      "text_a": "Along the fence, our neighbours are planting a hedge.",
+      "text_b": "Our neighbours are planting a hedge along the fence.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-010",
+      "text_a": "The printer on the second floor is out of toner again.",
+      "text_b": "The second-floor printer has run out of toner again.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-011",
+      "text_a": "Having learned to drive last year, she now commutes by car.",
+      "text_b": "She learned to drive last year and now commutes by car.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-012",
+      "text_a": "The recipe says two eggs, though one will do.",
+      "text_b": "The recipe calls for two eggs, but one will do.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-013",
+      "text_a": "We watched the sunset from the roof of the car park.",
+      "text_b": "From the roof of the car park, we watched the sunset.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-014",
+      "text_a": "Whenever the postman comes to the door, the dog barks.",
+      "text_b": "The dog barks whenever the postman comes to the door.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-015",
+      "text_a": "Unless it is icy, he usually cycles to work.",
+      "text_b": "He usually cycles to work unless it is icy.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-016",
+      "text_a": "Because the shop was quiet, we were served straight away.",
+      "text_b": "The shop was quiet, so we got served straight away.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-017",
+      "text_a": "These days my phone battery barely lasts the afternoon.",
+      "text_b": "My phone battery barely lasts the afternoon these days.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-018",
+      "text_a": "The talk ran over, so the questions were cut short.",
+      "text_b": "The questions were cut short because the talk ran over.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-019",
+      "text_a": "We repainted the kitchen over the long weekend.",
+      "text_b": "Over the long weekend, we repainted the kitchen.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-020",
+      "text_a": "The bus was late again, which made me miss the start.",
+      "text_b": "The bus was late again, so I missed the start.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-021",
+      "text_a": "She keeps her keys in a bowl by the front door.",
+      "text_b": "There is a bowl by the front door where she keeps her keys.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-022",
+      "text_a": "The garden needs watering if it does not rain tonight.",
+      "text_b": "If it does not rain tonight, the garden will need watering.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-023",
+      "text_a": "On the plane he read the whole book in one sitting.",
+      "text_b": "He read the whole book in one sitting on the plane.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-024",
+      "text_a": "On the first Sunday of every month, the museum is free.",
+      "text_b": "The museum is free on the first Sunday of the month.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-025",
+      "text_a": "The parcel is with the neighbour at number twelve.",
+      "text_b": "I left the parcel with the neighbour at number twelve.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-026",
+      "text_a": "The path along the river floods after heavy rain.",
+      "text_b": "After heavy rain, the river path floods.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-027",
+      "text_a": "We ordered too much food and had leftovers for days.",
+      "text_b": "Having ordered too much food, we had leftovers for days.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-028",
+      "text_a": "The heating comes on at six and goes off at nine.",
+      "text_b": "The heating is on from six until nine.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-029",
+      "text_a": "The invoice she sent on Monday was paid by Friday.",
+      "text_b": "She sent the invoice on Monday and was paid by Friday.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-030",
+      "text_a": "The train was so full that we stood the whole way.",
+      "text_b": "We stood the whole way because the train was so full.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-031",
+      "text_a": "From videos, my brother is teaching himself the guitar.",
+      "text_b": "My brother is teaching himself the guitar from videos.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-032",
+      "text_a": "When the weather is damp, the window sticks a bit.",
+      "text_b": "The window sticks a bit when the weather is damp.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-033",
+      "text_a": "We found a shortcut through the park to the station.",
+      "text_b": "There is a shortcut to the station through the park that we found.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-034",
+      "text_a": "The remote needs new batteries.",
+      "text_b": "The batteries in the remote need replacing.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-035",
+      "text_a": "He apologised for being late and offered to buy lunch.",
+      "text_b": "He apologised for being late, offering to buy lunch.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-036",
+      "text_a": "Every Wednesday, someone waters the office plants.",
+      "text_b": "The office plants get watered every Wednesday.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-037",
+      "text_a": "I prefer the earlier flight even though it costs more.",
+      "text_b": "Even though it costs more, I prefer the earlier flight.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-038",
+      "text_a": "Out of sofa cushions, the children built a den.",
+      "text_b": "The children built a den out of sofa cushions.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-039",
+      "text_a": "Next week the road is closed for resurfacing.",
+      "text_b": "The road will be closed for resurfacing next week.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-040",
+      "text_a": "Most mornings she swims before work.",
+      "text_b": "She swims most mornings before work.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-041",
+      "text_a": "We missed the turning and had to double back.",
+      "text_b": "Having missed the turning, we had to double back.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-042",
+      "text_a": "The soup needs a bit more salt, I think.",
+      "text_b": "I think the soup could do with a bit more salt.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-043",
+      "text_a": "The lift is out of order, so use the stairs.",
+      "text_b": "Please use the stairs, as the lift is out of order.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-044",
+      "text_a": "Every summer he grows tomatoes on the balcony.",
+      "text_b": "He grows tomatoes on the balcony every summer.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-045",
+      "text_a": "The film was longer than I expected but never dragged.",
+      "text_b": "Although longer than I expected, the film never dragged.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-046",
+      "text_a": "At half past two we are meeting at the fountain.",
+      "text_b": "We are meeting at the fountain at half past two.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-047",
+      "text_a": "Whenever the microwave is on, the wifi drops out.",
+      "text_b": "The wifi drops out whenever the microwave is on.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-048",
+      "text_a": "She sorted the photos into folders by year.",
+      "text_b": "The photos were sorted by year into folders.",
+      "flipped": false
+    },
+    {
+      "item_id": "cal-049",
+      "text_a": "By mid-morning the bakery has sold out of sourdough.",
+      "text_b": "The bakery sells out of sourdough by mid-morning.",
+      "flipped": true
+    },
+    {
+      "item_id": "cal-050",
+      "text_a": "The squeaky hinge on the back gate is finally fixed.",
+      "text_b": "I finally fixed the squeaky hinge on the back gate.",
+      "flipped": true
+    }
+  ]
+}

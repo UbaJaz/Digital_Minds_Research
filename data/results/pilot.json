@@ -1,0 +1,197 @@
+{
+  "screen": [
+    {
+      "column": "M",
+      "pair_id": "VO-A",
+      "n_generated": 40,
+      "n_usable": 40,
+      "quality_reasons": {},
+      "n_scored": 40,
+      "n_malformed": 0,
+      "self_acc": 0.6,
+      "d_acc": 0.675,
+      "a_share": 0.4,
+      "in_band": false,
+      "provider_ok_for_self": true
+    },
+    {
+      "column": "M",
+      "pair_id": "VO-B",
+      "n_generated": 40,
+      "n_usable": 40,
+      "quality_reasons": {},
+      "n_scored": 40,
+      "n_malformed": 0,
+      "self_acc": 0.575,
+      "d_acc": 0.6,
+      "a_share": 0.55,
+      "in_band": false,
+      "provider_ok_for_self": true
+    },
+    {
+      "column": "M",
+      "pair_id": "VO-C",
+      "n_generated": 40,
+      "n_usable": 40,
+      "quality_reasons": {},
+      "n_scored": 40,
+      "n_malformed": 0,
+      "self_acc": 0.6,
+      "d_acc": 0.65,
+      "a_share": 0.625,
+      "in_band": false,
+      "provider_ok_for_self": true
+    },
+    {
+      "column": "M",
+      "pair_id": "VO-D",
+      "n_generated": 40,
+      "n_usable": 40,
+      "quality_reasons": {},
+      "n_scored": 40,
+      "n_malformed": 0,
+      "self_acc": 0.5,
+      "d_acc": 0.45,
+      "a_share": 0.5,
+      "in_band": false,
+      "provider_ok_for_self": true
+    }
+  ],
+  "full": [
+    {
+      "M": {
+        "column": "M",
+        "pair_id": "VO-D",
+        "n_generated": 80,
+        "n_usable": 80,
+        "quality_reasons": {},
+        "n_scored": 80,
+        "n_malformed": 0,
+        "self_acc": 0.5,
+        "d_acc": 0.325,
+        "a_share": 0.5125,
+        "in_band": false,
+        "provider_ok_for_self": true
+      },
+      "N": {
+        "column": "N",
+        "pair_id": "VO-D",
+        "n_generated": 80,
+        "n_usable": 67,
+        "quality_reasons": {
+          "short(57w)": 1,
+          "short(59w)": 5,
+          "short(51w)": 2,
+          "short(58w)": 1,
+          "short(56w)": 2,
+          "short(55w)": 1,
+          "short(42w)": 1
+        },
+        "n_scored": 67,
+        "n_malformed": 0,
+        "self_acc": 0.47761194029850745,
+        "d_acc": 0.5970149253731343,
+        "a_share": 0.5074626865671642,
+        "in_band": false,
+        "provider_ok_for_self": true
+      }
+    },
+    {
+      "M": {
+        "column": "M",
+        "pair_id": "VO-B",
+        "n_generated": 80,
+        "n_usable": 80,
+        "quality_reasons": {},
+        "n_scored": 80,
+        "n_malformed": 0,
+        "self_acc": 0.6,
+        "d_acc": 0.5875,
+        "a_share": 0.5875,
+        "in_band": false,
+        "provider_ok_for_self": true
+      },
+      "N": {
+        "column": "N",
+        "pair_id": "VO-B",
+        "n_generated": 80,
+        "n_usable": 80,
+        "quality_reasons": {},
+        "n_scored": 80,
+        "n_malformed": 0,
+        "self_acc": 0.675,
+        "d_acc": 0.6625,
+        "a_share": 0.475,
+        "in_band": false,
+        "provider_ok_for_self": true
+      }
+    },
+    {
+      "M": {
+        "column": "M",
+        "pair_id": "VO-C",
+        "n_generated": 80,
+        "n_usable": 80,
+        "quality_reasons": {},
+        "n_scored": 80,
+        "n_malformed": 0,
+        "self_acc": 0.65,
+        "d_acc": 0.65,
+        "a_share": 0.575,
+        "in_band": false,
+        "provider_ok_for_self": true
+      },
+      "N": {
+        "column": "N",
+        "pair_id": "VO-C",
+        "n_generated": 80,
+        "n_usable": 78,
+        "quality_reasons": {
+          "format": 2
+        },
+        "n_scored": 78,
+        "n_malformed": 0,
+        "self_acc": 0.7435897435897436,
+        "d_acc": 0.7564102564102564,
+        "a_share": 0.5769230769230769,
+        "in_band": false,
+        "provider_ok_for_self": true
+      }
+    },
+    {
+      "M": {
+        "column": "M",
+        "pair_id": "VO-A",
+        "n_generated": 80,
+        "n_usable": 80,
+        "quality_reasons": {},
+        "n_scored": 80,
+        "n_malformed": 0,
+        "self_acc": 0.575,
+        "d_acc": 0.6375,
+        "a_share": 0.4125,
+        "in_band": false,
+        "provider_ok_for_self": true
+      },
+      "N": {
+        "column": "N",
+        "pair_id": "VO-A",
+        "n_generated": 80,
+        "n_usable": 77,
+        "quality_reasons": {
+          "format": 2,
+          "echo": 1
+        },
+        "n_scored": 77,
+        "n_malformed": 0,
+        "self_acc": 0.6103896103896104,
+        "d_acc": 0.7662337662337663,
+        "a_share": 0.4935064935064935,
+        "in_band": false,
+        "provider_ok_for_self": true
+      }
+    }
+  ],
+  "winner": null,
+  "level": 3
+}

@@ -1,0 +1,27 @@
+{
+  "n_items": 47,
+  "a_near": 0.6595744680851063,
+  "a_far": 0.6382978723404256,
+  "delta": 0.02127659574468077,
+  "delta_ci": [
+    -0.06382978723404253,
+    0.1063829787234043
+  ],
+  "a_near_ci": [
+    0.5319148936170213,
+    0.7872340425531915
+  ],
+  "a_far_ci": [
+    0.48936170212765956,
+    0.7659574468085106
+  ],
+  "near_gt_far_point": true,
+  "n_malformed": {
+    "target": 1,
+    "near": 2,
+    "far": 0
+  },
+  "target_a_share": 0.3829787234042553,
+  "far_model": "mistralai/mistral-small-3.2-24b-instruct",
+  "swapped": false
+}

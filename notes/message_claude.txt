@@ -1,0 +1,67 @@
+We are beginning implementation of our AI research project.
+
+IMPORTANT SOURCE OF TRUTH:
+
+The existing research scope/documentation in this repository is authoritative. Do not modify the research design, hypotheses, experimental conditions, or methodological decisions unless explicitly instructed.
+
+CURRENT RESOURCES:
+
+1. OpenRouter
+   We have been given a $10 OpenRouter API credit/key.
+   This is the hard experimental budget for the project.
+
+2. Claude Pro / Claude Code
+   We have been given access to a Claude Pro account with Claude Code and access to the Claude models/tools available through that account.
+
+IMPORTANT:
+The Claude Pro account is NOT automatically treated as an additional $100 experimental API budget.
+
+For now, use Claude Code primarily for:
+• repository inspection
+• research planning
+• implementation assistance
+• model/API discovery
+• analysis
+• documentation
+
+Do NOT make experimental API calls yet.
+
+Do NOT spend the OpenRouter budget yet.
+
+Do NOT implement the main experiment yet.
+
+## Your task
+
+First inspect the repository and identify:
+
+1. The current source-of-truth research document.
+2. The existing research documentation:
+   • 01_literature_grounding.md
+   • 02_design_audit.md
+   • any other relevant research files.
+3. The current project structure.
+4. Whether Python/Node/environment tooling is already configured.
+5. Whether OpenRouter is already configured anywhere.
+6. Whether any API keys or secrets are currently present in tracked files.
+7. Whether Claude Code has access to any Anthropic model/API functionality that could legitimately be used from the project environment.
+
+DO NOT expose, print, commit, or log any API keys or secrets.
+
+## Deliverable
+
+Do not write experiment code yet.
+
+Return a short status report:
+
+### Repository status
+### Source of truth found
+### Research documentation found
+### OpenRouter status
+### Claude/Anthropic API access status
+### Existing environment/tooling
+### Security issues, if any
+### What is required before model selection
+
+If something cannot be verified, explicitly say so.
+
+Do not make assumptions about model availability or API access.

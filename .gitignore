@@ -1,0 +1,32 @@
+# --- secrets: never commit ---
+.env
+.env.*
+!.env.example
+*.key
+
+# --- python ---
+__pycache__/
+*.py[cod]
+*.pyc
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# --- data ---
+# Large provider dumps and generated corpora are not tracked.
+data/raw/openrouter_models.json
+data/generated/
+data/checkpoints/
+# Per-call verification/experiment logs ARE the reproducibility record -> tracked.
+# (data/raw/verification.jsonl is deliberately not ignored.)
+
+# --- os / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

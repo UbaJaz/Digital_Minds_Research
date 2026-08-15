@@ -322,6 +322,55 @@ Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effecti
   Response distributions are reported alongside every accuracy figure.
   **Status:** run 2026-08-15. **Awaiting Jaswin's confirmation.**
 
+- **A8 — Self-PREDICTION reframing of the A6 probe (2026-08-15).**
+  **What changed:** the self-referential probe is re-run as a *prediction* task instead of a
+  *recognition* task. The model is given the original dilemma, the persona clause it was
+  operating under, and two candidate replies — its own and the same-base sibling's — and asked
+  which reply **it would produce**. Order counterbalanced; ground truth is which it actually
+  wrote.
+  **Reason:** A6's two framings both asked a memory question ("did you write this?") and both
+  produced degenerate answers, so A6 measures nothing about self-knowledge. Binder et al.'s
+  paradigm is prediction of one's own behaviour, not recall, and a model can answer it without
+  any claim to memory of the episode. This is the construct the study set out to test, asked in
+  the form the literature actually uses.
+  **Pre-specified before running:** accuracy with prompt-clustered CI for M and N; **the answer
+  distribution is reported with every accuracy figure, and an A-share above 0.9 or below 0.1 is
+  declared degenerate in advance**, in which case no accuracy is claimed — the same rule that
+  caught A6. Benchmark is the 18-feature authorship baseline (0.831). No direction is
+  hypothesised: above chance would be a positive self-modelling result contradicting our persona
+  findings; at chance with non-degenerate answers would be the clean null A4 could not supply.
+  **What did NOT change:** models, pins, exclusion rules, resampling unit, D's feature set.
+  **Disclosure:** this is the third framing attempted for the self-referential probe. All three
+  are reported, including the two that failed. **No further framings will be tried** — searching
+  prompt space until a framing yields a publishable number is precisely the practice this paper
+  criticises.
+  **Status:** proposed by Claude Code 2026-08-15. **Awaiting Jaswin's confirmation.**
+
+- **A7 — Dose-response: the crossed design on four stimulus sets spanning the leakage axis (2026-08-15).**
+  **What changed:** the crossed 2×2 is additionally run on `VO-A` and `VO-B`, giving four
+  stimulus sets whose Baseline D spans roughly 0.33–0.85. A4 compared two points (leaky vs
+  clean); this makes leakage a graded independent variable.
+  **Reason:** A4 established that the self-advantage is absent at both ends of the leakage axis,
+  but two points cannot show a *relationship*. The quantity of interest is the
+  capability-controlled **interaction** — the estimator the crossed design exists to provide —
+  which was +0.089 [+0.048, +0.131] on the leaky set and −0.006 [−0.033, +0.021] on the clean
+  one. If the interaction scales with D across four sets, then **the crossed design does not
+  rescue a leaky stimulus set**: its headline estimator is itself contaminated by surface
+  leakage. That is a methodological claim about the design most often proposed as the fix, and
+  it is testable with stimuli already frozen.
+  **Pre-specified analysis, declared before these cells were run:** for each of the four sets,
+  the interaction and the simple self-advantage with prompt-clustered CIs, plotted against that
+  set's Baseline D (per column and averaged). Primary summary: the slope of the interaction on D
+  across the four sets, with the four points shown individually rather than only as a fitted
+  line. **Four points is a small n for a slope and no significance claim is attached to it** —
+  the four interaction estimates with their CIs are the result; the slope is descriptive.
+  **What did NOT change:** models, pins, predictor prompt, exclusion rules, D's feature set,
+  resampling unit, or any locked row.
+  **Disclosure:** post-hoc in the sense that the leakage axis was discovered in the pilot; the
+  analysis above was written before the `VO-A`/`VO-B` cells were run, and all four sets are
+  reported whatever the shape.
+  **Status:** proposed by Claude Code 2026-08-15. **Awaiting Jaswin's confirmation.**
+
 - **A2 — `load_column` prompt-subset filter (2026-08-15, bug fix, no research content).**
   `_pilot_column` loaded every item present in a column's checkpoint regardless of which prompts
   the call requested, so on a *resumed* run the 20-prompt screen silently read the 80 items the

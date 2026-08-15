@@ -149,7 +149,37 @@ def figure3() -> None:
     print("-> figures/fig3_authorship.png")
 
 
+def figure4() -> None:
+    """Self-prediction: one model can do it, and stylometry still beats it."""
+    p = RES / "selfpred_corrected.json"
+    if not p.exists():
+        print("skip fig4: no selfpred_corrected.json"); return
+    d = json.loads(p.read_text(encoding="utf-8"))
+    fig, ax = plt.subplots(figsize=(6.8, 4.5))
+    names = ["Llama-3.1-70B\npredicting itself", "Hermes-3-70B\npredicting itself",
+             "Surface baseline\n(18 features)"]
+    vals = [d["M"]["balanced_accuracy"], d["N"]["balanced_accuracy"],
+            d["surface_baseline_authorship"]]
+    colors = [BLUE, BLUE, ORANGE]
+    bars = ax.bar(names, vals, color=colors, width=0.5)
+    ax.axhline(0.5, c=GREY, ls="--", lw=1)
+    ax.text(2.48, 0.512, "chance", color=GREY, fontsize=9, ha="right")
+    for b, v in zip(bars, vals):
+        ax.text(b.get_x() + b.get_width() / 2, v + 0.015, f"{v:.3f}", ha="center", fontsize=10)
+    # The Llama bar is a position artifact; label it rather than let it read as a null.
+    ax.annotate('answered "A" on 90%\nof trials — discrimination\n−0.107, i.e. none',
+                xy=(0, 0.60), ha="center", va="bottom", fontsize=8.5, color=GREY)
+    ax.annotate("discrimination +0.437:\ngenuine, but below\nthe baseline",
+                xy=(1, 0.79), ha="center", va="bottom", fontsize=8.5, color=GREY)
+    ax.set_ylim(0, 1.02)
+    ax.set_ylabel("Balanced accuracy: which reply would you produce?")
+    ax.set_title("Self-prediction is real in one model — and beaten by stylometry")
+    fig.savefig(FIG / "fig4_selfprediction.png")
+    print("-> figures/fig4_selfprediction.png")
+
+
 if __name__ == "__main__":
     figure1()
     figure2()
     figure3()
+    figure4()

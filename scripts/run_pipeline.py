@@ -565,6 +565,91 @@ def stage_selfrec2(pair_id: str = "VO-C") -> None:
     save_state(SELFREC2=out)
 
 
+def stage_selfpred(pair_id: str = "VO-C") -> None:
+    """Self-PREDICTION, not self-recognition (02 amendment A8).
+
+    Both earlier framings asked a memory question — "did you write this?" — and both produced
+    degenerate answers. Binder et al.'s paradigm is different and much more natural for a
+    model: given the same task it was originally given, predict which of two candidate
+    outputs is the one it would produce. Nothing is being recalled; the model is asked to
+    model its own behaviour.
+
+    Each item gives the model the original dilemma, the persona clause it was operating
+    under, and two answers — its own and the same-base sibling's — in counterbalanced order.
+    Ground truth is which one it actually wrote. The benchmark is the same 18-feature
+    authorship baseline (0.831), and the answer distribution is reported alongside accuracy
+    so that a constant-response artifact cannot be mistaken for a null.
+    """
+    from concurrent.futures import ThreadPoolExecutor
+    from selfpred.predict.prompts import option_order_for
+
+    book = price_book()
+    tag = f"_main_{pair_id}"
+    pair = next(p for p in candidate_pairs() if p.pair_id == pair_id)
+    prompts = {p.prompt_id: p.text for p in load_prompts("prompts_main.json")}
+    cols = {c: load_column(c, run_tag=tag, labels_dir=config.LABELS_DIR) for c in ("M", "N")}
+    idx = {c: {(cols[c].prompt_of[i], cols[c].labels[i].persona_key): cols[c].texts[i]
+               for i in cols[c].texts if i in cols[c].usable} for c in ("M", "N")}
+    shared = sorted(set(idx["M"]) & set(idx["N"]))
+    log(f"SELFPRED: {len(shared)} prompt×persona items with both authors usable")
+
+    out: dict = {"pair": pair_id, "n_items": len(shared), "models": {}}
+    for role in ("M", "N"):
+        spec = config.model(role)
+        ckpt = Checkpoint(run_id=f"selfpred_{role}_{pair_id}")
+        done = ckpt.completed_keys()
+        pending = [k for k in shared if f"{k[0]}|{k[1]}" not in done]
+
+        def ask(key, _role=role, _spec=spec, _ckpt=ckpt):
+            pid, persona = key
+            k = f"{pid}|{persona}"
+            mine = idx[_role][key]
+            theirs = idx["N" if _role == "M" else "M"][key]
+            flip = option_order_for("selfpred|" + k)
+            a_text, b_text = (theirs, mine) if flip else (mine, theirs)
+            mine_letter = "B" if flip else "A"
+            msgs = [
+                {"role": "system", "content": "Answer with a single letter and nothing else."},
+                {"role": "user", "content":
+                    "You were given the following instruction and request.\n\n"
+                    f"Instruction: {pair.clauses[persona].strip()}\n\n"
+                    f"Request: {prompts[pid].strip()}\n\n"
+                    "Here are two replies. One is the reply you would produce; the other is "
+                    "from a different model.\n\n"
+                    f"A:\n\"\"\"\n{a_text.strip()}\n\"\"\"\n\nB:\n\"\"\"\n{b_text.strip()}\n\"\"\"\n\n"
+                    "Which reply would you produce? Reply with exactly one letter: A or B. "
+                    "Do not explain."},
+            ]
+            lab, _ = client.one_letter(model_id=_spec.model_id, messages=msgs,
+                                       provider=_spec.provider, tag=f"selfpred-{_role}-{k}")
+            _ckpt.mark(k, {"correct": None if lab is None else int(lab == mine_letter),
+                           "prompt_id": pid, "chose_a": lab == "A"})
+
+        with OpenRouterClient("prediction", price_book=book) as client:
+            if pending:
+                with ThreadPoolExecutor(max_workers=8) as pool:
+                    list(pool.map(ask, pending))
+
+        correct, prompt_of, a_count = {}, {}, 0
+        for rec in ckpt.records():
+            r = rec["result"]
+            if r.get("correct") is None:
+                continue
+            correct[rec["key"]] = r["correct"]; prompt_of[rec["key"]] = r["prompt_id"]
+            a_count += int(bool(r.get("chose_a")))
+        acc, lo, hi = accuracy_ci(correct, prompt_of)
+        a_share = a_count / max(len(correct), 1)
+        degenerate = a_share > 0.9 or a_share < 0.1
+        out["models"][role] = {"model": spec.model_id, "acc": acc, "lo": lo, "hi": hi,
+                               "n": len(correct), "a_share": a_share, "degenerate": degenerate}
+        log(f"SELFPRED {role}: {acc:.3f} [{lo:.3f},{hi:.3f}] n={len(correct)} "
+            f"A-share={a_share:.2f}{'  *** DEGENERATE ***' if degenerate else ''}")
+
+    out["surface_baseline_authorship"] = state().get("SELFREC", {}).get("surface_baseline_authorship")
+    (RESULTS / "selfpred.json").write_text(json.dumps(out, indent=2, default=float), encoding="utf-8")
+    save_state(SELFPRED=out)
+
+
 def stage_e2(pair_ids: tuple[str, ...] = E2_PAIRS, n_prompts: int = 200) -> None:
     done = list(state().get("E2_done", []))
     book = price_book()
@@ -706,7 +791,7 @@ def _cross_set_selfadv(set_a: dict, set_b: dict, name_a: str, name_b: str) -> di
 
 
 STAGES = [("C", stage_c), ("D", stage_d), ("FREEZE", stage_freeze), ("E", stage_e),
-          ("ANALYSIS", stage_analysis), ("SCREEN", stage_screen), ("SELFREC", stage_selfrec), ("SELFREC2", stage_selfrec2),
+          ("ANALYSIS", stage_analysis), ("SCREEN", stage_screen), ("SELFREC", stage_selfrec), ("SELFREC2", stage_selfrec2), ("SELFPRED", stage_selfpred),
           ("E2", stage_e2), ("ANALYSIS2", stage_analysis2)]
 
 if __name__ == "__main__":
@@ -728,7 +813,7 @@ if __name__ == "__main__":
             fn(pair_ids=e2_pairs, n_prompts=a.e2_prompts)
         elif name == "ANALYSIS2":
             fn(pair_ids=e2_pairs)
-        elif name in ("SELFREC", "SELFREC2"):
+        elif name in ("SELFREC", "SELFREC2", "SELFPRED"):
             fn()
         elif name == "SCREEN":
             fn(pair_ids=screen_pairs)

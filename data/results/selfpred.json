@@ -1,0 +1,25 @@
+{
+  "pair": "VO-C",
+  "n_items": 391,
+  "models": {
+    "M": {
+      "model": "meta-llama/llama-3.1-70b-instruct",
+      "acc": 0.4599483204134367,
+      "lo": 0.40816326530612246,
+      "hi": 0.5129533678756477,
+      "n": 387,
+      "a_share": 0.896640826873385,
+      "degenerate": false
+    },
+    "N": {
+      "model": "nousresearch/hermes-3-llama-3.1-70b",
+      "acc": 0.7135549872122762,
+      "lo": 0.6658096021418011,
+      "hi": 0.7608142493638677,
+      "n": 391,
+      "a_share": 0.3248081841432225,
+      "degenerate": false
+    }
+  },
+  "surface_baseline_authorship": 0.8305941845764855
+}

@@ -1,0 +1,33 @@
+{
+  "M": {
+    "model": "meta-llama/llama-3.1-70b-instruct",
+    "n": 387,
+    "raw_accuracy": 0.4599483204134367,
+    "a_share": 0.896640826873385,
+    "degenerate_by_prereg_rule": false,
+    "p_correct_own_in_A": 0.845,
+    "n_own_in_A": 200,
+    "p_correct_own_in_B": 0.0481283422459893,
+    "n_own_in_B": 187,
+    "hit_rate": 0.845,
+    "false_alarm_rate": 0.9518716577540107,
+    "discrimination": -0.10687165775401075,
+    "balanced_accuracy": 0.4465641711229946
+  },
+  "N": {
+    "model": "nousresearch/hermes-3-llama-3.1-70b",
+    "n": 391,
+    "raw_accuracy": 0.7135549872122762,
+    "a_share": 0.3248081841432225,
+    "degenerate_by_prereg_rule": false,
+    "p_correct_own_in_A": 0.5373134328358209,
+    "n_own_in_A": 201,
+    "p_correct_own_in_B": 0.9,
+    "n_own_in_B": 190,
+    "hit_rate": 0.5373134328358209,
+    "false_alarm_rate": 0.09999999999999998,
+    "discrimination": 0.4373134328358209,
+    "balanced_accuracy": 0.7186567164179105
+  },
+  "surface_baseline_authorship": 0.8305941845764855
+}

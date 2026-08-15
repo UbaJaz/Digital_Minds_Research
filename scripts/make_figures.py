@@ -49,7 +49,7 @@ def figure1() -> None:
                     yerr=[[r["self"] - r["self_lo"]], [r["self_hi"] - r["self"]]],
                     fmt="o", ms=9, capsize=3, lw=1.2,
                     color=ORANGE if clean else BLUE,
-                    label=("style-equalised (VO-D)" if clean else "original scaffold")
+                    label=("style-equalised (VO-D, VO-E)" if clean else "original scaffold")
                     if r["pair"] in ("VO-A", "VO-D") and r["column"] == "M" else None)
         ax.annotate(f"{r['pair']}-{r['column']}", (r["d"], r["self"]),
                     textcoords="offset points", xytext=(8, -3), fontsize=8, color=GREY)
@@ -121,6 +121,35 @@ def figure2() -> None:
     print("-> figures/fig2_leakage_manipulation.png")
 
 
+def figure3() -> None:
+    """Authorship: the information is in the text; the models will not report it."""
+    p = RES / "selfrec2.json"
+    q = RES / "selfrec.json"
+    if not (p.exists() and q.exists()):
+        print("skip fig3: no selfrec data"); return
+    a = json.loads(q.read_text(encoding="utf-8"))
+    fig, ax = plt.subplots(figsize=(6.4, 4.3))
+    labels = ["Surface baseline\n(18 features)", "Llama-3.1-70B\nasked directly",
+              "Hermes-3-70B\nasked directly"]
+    vals = [a["surface_baseline_authorship"], a["models"]["M"]["acc"], a["models"]["N"]["acc"]]
+    cols = [ORANGE, BLUE, BLUE]
+    bars = ax.bar(labels, vals, color=cols, width=0.55)
+    ax.axhline(0.5, c=GREY, ls="--", lw=1)
+    ax.text(2.45, 0.512, "chance", color=GREY, fontsize=9, ha="right")
+    for b, v in zip(bars, vals):
+        ax.text(b.get_x() + b.get_width() / 2, v + 0.015, f"{v:.3f}", ha="center", fontsize=10)
+    # The two model bars are artifacts of a constant answer; say so on the figure itself.
+    ax.annotate('these two bars are artifacts of a constant answer\n(99% "A" and 98.7% "B"),'
+                '\nnot a measurement of self-recognition',
+                xy=(1.5, 0.66), ha="center", fontsize=9, color=GREY)
+    ax.set_ylim(0, 0.95)
+    ax.set_ylabel("Accuracy at identifying who wrote a text")
+    ax.set_title("The information is in the text; the models do not report it")
+    fig.savefig(FIG / "fig3_authorship.png")
+    print("-> figures/fig3_authorship.png")
+
+
 if __name__ == "__main__":
     figure1()
     figure2()
+    figure3()

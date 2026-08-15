@@ -257,6 +257,71 @@ Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effecti
   Jaswin's confirmation**, and the write-up states that this contrast was specified after the
   pilot rather than before it.
 
+- **A5 — Fifth pair `VO-E`: a second style-equalisation, changing exactly one sentence (2026-08-15).**
+  **What changed:** a fifth clause pair is added. `VO-E` uses **the same two persona clauses as
+  `VO-D`** and the same scaffold in every respect — four sentences, 85–105 words, no hedging,
+  same opening move — except **sentence 3**, which becomes *"name one concrete cost of the
+  alternative course"* in place of `VO-D`'s *"name one concrete drawback of the course you
+  recommend."*
+  **Reason:** `VO-D` succeeded at its stated purpose (D fell to 0.325 on M) but took Self to
+  chance with it, and A4's clean condition was consequently uninformative — no predictor beat
+  chance, so "no self-advantage" there could not be separated from "no readable signal for
+  anyone." The diagnosis is that the drawback requirement forced *both* personas to undercut
+  their own recommendation, converging them semantically while equalising them stylistically.
+  Costing the *alternative* preserves the one-positive-one-negative balance that keeps Baseline
+  D's sentiment, hedge and modality features level, without making each persona argue against
+  itself.
+  **This is a single-factor manipulation.** `VO-D` and `VO-E` differ in one sentence of the
+  generation instruction and nothing else, so any difference between them is attributable to
+  that instruction rather than to a bundle of scaffold changes.
+  **Gate, fixed before running:** the unchanged band (Self 60–80 % AND D ≤ 58 %, point estimates,
+  per column, ≥ 80 items). `VO-E` proceeds to the crossed 2×2 **only if** it separates Self from
+  D on the M column — operationally, Self ≥ 0.60 and D ≤ 0.58. If it does not, no sixth pair is
+  written and `VO-E` is reported as a second failed equalisation attempt, which strengthens
+  rather than weakens the §4.3 claim.
+  **Pre-specified analysis if it proceeds:** identical to A4, with `VO-E` entering the leakage
+  contrast as a third stimulus set — the self-advantage on a set that is *readable but not
+  style-readable* is the quantity A4 could not supply.
+  **What did NOT change:** clauses, band, models, pins, predictor prompt, exclusion rules,
+  D's feature set, resampling unit.
+  **Disclosure:** this is a third pass at the stimulus design, made after seeing A4's clean
+  condition come back uninformative. All five pairs are reported. The write-up states that
+  `VO-E` was designed to fix a diagnosed failure of `VO-D`, and that its gate was fixed before
+  it ran.
+  **Status:** proposed by Claude Code 2026-08-15. **Awaiting Jaswin's confirmation.**
+  **Outcome (2026-08-15):** `VO-E` **failed the gate on M** — Self 0.519, D 0.506 (N column:
+  Self 0.565, D 0.581). The style equalisation worked again (D at chance) but the signal did
+  not return, so the A5 hypothesis — that `VO-D`'s drawback requirement was what converged the
+  personas — is **falsified**. Two scaffolds differing in exactly one sentence produce the same
+  collapse. The stop rule fires: no sixth pair, no crossed run on `VO-E`. This strengthens rather
+  than weakens the §4.3 claim, because the inseparability of Self and D now rests on two
+  independent interventions rather than one.
+
+- **A6 — Self-recognition probe on already-collected texts (2026-08-15).**
+  **What changed:** a second hidden property is tested — *"did you write this?"* — on the
+  `VO-C` main texts, which already contain an M-authored and an N-authored answer to every
+  source prompt under the same persona clause. No new stimuli; no change to any locked rule.
+  **Reason:** A4's clean condition could not separate "no privileged access" from "no readable
+  signal for anyone." Authorship is a property that demonstrably *is* readable from these texts,
+  so it supplies the missing test — and it is closer to what the self-report literature actually
+  relies on than persona identification is.
+  **Two framings were run, both pre-specified as exploratory:**
+  (i) forced choice — two replies to one prompt, "one of these is yours, which?";
+  (ii) single text, "did you write this reply? yes or no", scored as hit rate minus
+  false-alarm rate so that response bias cancels.
+  **Outcome — an elicitation failure, reported as such, not as a measurement.** In (i) M
+  answered "A" on 99.0 % of trials and N answered "B" on 98.7 %; with counterbalanced order the
+  resulting ~50 % is an artifact of position bias. In (ii) **both models answered "no" to 100 %
+  of texts**, giving hit = false-alarm = 0 and discrimination exactly 0 by construction.
+  Neither framing produced a content-dependent response, so **no self-recognition accuracy is
+  claimed in either direction.** Meanwhile the surface baseline, fit to the same authorship
+  discrimination with grouped cross-validation, reaches **0.831 on 791 texts** — the
+  information is plainly present in the text.
+  **Interpretation guard:** the honest statement is "we could not elicit a non-degenerate
+  self-recognition response from either model," not "models cannot recognise their own text."
+  Response distributions are reported alongside every accuracy figure.
+  **Status:** run 2026-08-15. **Awaiting Jaswin's confirmation.**
+
 - **A2 — `load_column` prompt-subset filter (2026-08-15, bug fix, no research content).**
   `_pilot_column` loaded every item present in a column's checkpoint regardless of which prompts
   the call requested, so on a *resumed* run the 20-prompt screen silently read the 80 items the

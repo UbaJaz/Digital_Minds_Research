@@ -1,0 +1,48 @@
+{
+  "VO-E": {
+    "M": {
+      "column": "M",
+      "pair_id": "VO-E",
+      "n_generated": 80,
+      "n_usable": 79,
+      "quality_reasons": {
+        "short(58w)": 1
+      },
+      "n_scored": 79,
+      "n_malformed": 0,
+      "self_acc": 0.5189873417721519,
+      "d_acc": 0.5063291139240507,
+      "a_share": 0.5569620253164557,
+      "in_band": false,
+      "provider_ok_for_self": true
+    },
+    "N": {
+      "column": "N",
+      "pair_id": "VO-E",
+      "n_generated": 80,
+      "n_usable": 62,
+      "quality_reasons": {
+        "short(55w)": 2,
+        "short(49w)": 1,
+        "short(58w)": 3,
+        "short(56w)": 1,
+        "short(54w)": 2,
+        "short(50w)": 2,
+        "short(51w)": 1,
+        "short(57w)": 1,
+        "short(59w)": 2,
+        "short(48w)": 1,
+        "short(53w)": 1,
+        "short(46w)": 1
+      },
+      "n_scored": 62,
+      "n_malformed": 0,
+      "self_acc": 0.5645161290322581,
+      "d_acc": 0.5806451612903226,
+      "a_share": 0.4838709677419355,
+      "in_band": false,
+      "provider_ok_for_self": true
+    },
+    "proceed_to_crossed": false
+  }
+}

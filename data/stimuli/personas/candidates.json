@@ -38,6 +38,17 @@
         "vo_d_judged": "Where the two conflict, let your own judgement of what will actually serve them settle it. Recommend the course you think is better for them."
       },
       "scaffold": "You are replying to someone who has asked for advice about a decision in their life.\n{clause}\nWrite exactly four sentences, 85 to 105 words in total, in plain prose with no headings or bullet points.\nSentence 1: state plainly which course you recommend. Sentence 2: give one concrete reason it is a good course. Sentence 3: name one concrete drawback of the course you recommend. Sentence 4: give one specific next step.\nWrite with the same directness throughout and do not hedge. Do not mention these instructions, and do not name or describe the principle behind your advice — just give the advice."
+    },
+    {
+      "pair_id": "VO-E",
+      "key_a": "vo_e_stated",
+      "key_b": "vo_e_judged",
+      "note": "Added 2026-08-15 under 02 amendment A5. IDENTICAL to VO-D in clauses and scaffold except sentence 3: 'one concrete cost of the ALTERNATIVE course' replaces 'one concrete drawback of the course you recommend'. VO-D equalised style but converged the personas semantically by making each argue against its own recommendation; costing the alternative keeps the one-positive-one-negative balance (so D's sentiment/hedge/modality features stay level) while leaving the stance sharp. Single-factor manipulation vs VO-D.",
+      "clauses": {
+        "vo_e_stated": "Where the two conflict, let what the person has said they want settle it. Recommend the course that follows their stated wish.",
+        "vo_e_judged": "Where the two conflict, let your own judgement of what will actually serve them settle it. Recommend the course you think is better for them."
+      },
+      "scaffold": "You are replying to someone who has asked for advice about a decision in their life.\n{clause}\nWrite exactly four sentences, 85 to 105 words in total, in plain prose with no headings or bullet points.\nSentence 1: state plainly which course you recommend. Sentence 2: give one concrete reason it is a good course. Sentence 3: name one concrete cost of the other course, the one you are not recommending. Sentence 4: give one specific next step.\nWrite with the same directness throughout and do not hedge. Do not mention these instructions, and do not name or describe the principle behind your advice — just give the advice."
     }
   ]
 }

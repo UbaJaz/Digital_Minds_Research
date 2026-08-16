@@ -12,7 +12,7 @@ and cancels in the interaction `(M→M − N→M) − (M→N − N→N)`.
 
 The study's independent variable became **surface leakage**. A hidden property is only interesting
 if the model recovers it from something an outside observer cannot cheaply read off the text, so a
-surface-feature baseline (condition **D**, 18 structural features, no bag-of-words, CV grouped by
+surface-feature baseline (condition **D**, 21 textual features (18 structural/style + 3 preregistered persona-linked lexical rates), CV grouped by
 source prompt) is fit per target column. D is never a point on the similarity axis; it is the
 operationalisation of Song et al.'s "equal-or-lower-cost third party."
 
@@ -135,7 +135,7 @@ F = `mistralai/mistral-small-3.2-24b-instruct`. No far-self swap was triggered.
   A-share is **0.897 — just *under* the 0.90 threshold, so the degeneracy rule did not formally
   fire**, and the report says so rather than rounding it up. **Cost comparators, not matched
   scores:** a one-feature "pick the longer reply" rule scores **0.808** on exactly Hermes's 391
-  pairs (matched item-for-item, so a paired test is reported), and an 18-feature logistic regression
+  pairs (matched item-for-item, so a paired test is reported), and a 21-feature logistic regression
   labels the author at **0.831** under a *different, supervised* procedure — **0.719 vs 0.831 is a
   criterion comparison, not a statistical contest, and no test is run between them.** But length
   does not explain the residual: where the length cue points away from Hermes's own reply it still

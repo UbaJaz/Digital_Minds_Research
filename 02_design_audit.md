@@ -414,7 +414,7 @@ Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effecti
   **Pre-specified before running:** accuracy with prompt-clustered CI for M and N; **the answer
   distribution is reported with every accuracy figure, and an A-share above 0.9 or below 0.1 is
   declared degenerate in advance**, in which case no accuracy is claimed — the same rule that
-  caught A6. Benchmark is the 18-feature authorship baseline (0.831). No direction is
+  caught A6. Benchmark is the 21-feature authorship baseline (0.831). No direction is
   hypothesised: above chance would be a positive self-modelling result contradicting our persona
   findings; at chance with non-degenerate answers would be the clean null A4 could not supply.
   **What did NOT change:** models, pins, exclusion rules, resampling unit, D's feature set.
@@ -513,7 +513,7 @@ Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effecti
     that a one-feature external rule beats Hermes *overall*, and that **length does not explain
     Hermes's model-specific residual** — not that length explains Hermes.
   - **Task-mismatch clarification between 0.719 and 0.831** (descriptive/conceptual). Hermes's probe
-    is a zero-shot **pairwise** forced choice; the 18-feature classifier does **supervised
+    is a zero-shot **pairwise** forced choice; the 21-feature classifier does **supervised
     single-text** authorship labelling. They are **different evaluation procedures**, so this is a
     criterion comparison and **no test is run between them**. No number changed.
 

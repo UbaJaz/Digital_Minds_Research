@@ -1,4 +1,4 @@
-# Beaten by Eighteen Features
+# Beaten by a Cheap Surface Classifier
 ### A Capability-Controlled Test of Privileged Self-Access
 
 **Ubayd Hattas** — Computer Science, Statistics & Data Science, University of Cape Town
@@ -18,7 +18,7 @@ Reliability), 14–16 August 2026
   hit − false alarm **+0.437**. Llama-3.1 shows none. We are not walking that back.
 - **A length-only observer predicts the same outcome better overall.** "Pick the longer reply" —
   one feature, no training — scores **0.808** on exactly Hermes's 391 pairs, matched item-for-item.
-- **The 18-feature classifier is strong but is a different evaluation procedure.** It labels the
+- **The 21-feature classifier is strong but is a different evaluation procedure.** It labels the
   author of the same texts at **0.831** under *supervised, single-text* cross-validation, against
   Hermes's *zero-shot pairwise* forced choice. That is a criterion comparison; **no statistical
   test is run between 0.719 and 0.831.**
@@ -44,7 +44,7 @@ Not "can a model predict itself" — it can. The question that matters for model
 runs almost entirely on self-report, is whether that prediction is *privileged*. We adopt Song,
 Lederman, Hu & Mahowald's criterion — a process is introspective only if it is more reliable than an
 equal-or-lower-cost process available to a third party — and build the third party explicitly, as an
-18-feature stylometric classifier.
+21-feature surface classifier.
 
 Two confounds block a clean black-box test. **Capability:** the "self" predictor is usually also the
 strongest model in the comparison, so Self > Other proves nothing on its own. **Surface leakage:** a
@@ -59,7 +59,7 @@ the first by construction, and make the second a measurement rather than an assu
 | Hermes-3 discrimination (hit − false alarm) | **+0.437** [+0.349, +0.519] | point estimate preregistered in A8; **interval post hoc** |
 | Llama-3.1 discrimination | −0.107 [−0.166, −0.048] | **interval post hoc**; A-share 0.897, just under the 0.90 degeneracy threshold, which therefore did not fire |
 | Length-only observer, same 391 pairs | **0.808** [0.768, 0.847] | **post hoc**; paired difference +0.095 [+0.036, +0.155], McNemar p = 0.0018 |
-| 18-feature classifier, single-text authorship | **0.831** | *different* evaluation procedure — supervised, single-text; no test against 0.719 |
+| 21-feature classifier, single-text authorship | **0.831** | *different* evaluation procedure — supervised, single-text; no test against 0.719 |
 | Hermes-3 residual where its reply is **not** longer | **+0.381** [+0.188, +0.566] | **post hoc**, 75 pairs |
 | `VO-C` capability-controlled interaction | **+0.089** [+0.048, +0.131] | the *originally preregistered* estimand, substituted after the pilot by A4 |
 | `VO-C` raw self-advantage (M→M − N→M) | −0.033 [−0.058, −0.008] | A4's post-pilot primary contrast |
@@ -79,7 +79,7 @@ amendment **A9**.
   `(M→M − N→M) − (M→N − N→N)`.
 - **Four stimulus constructions on a shared 200-prompt pool** — not four independent prompt
   samples. 24 cells, ≈400 items per cell, **9,269 scored trials, zero malformed.**
-- **18-feature surface baseline (condition D)**, no bag-of-words, 5-fold cross-validation **grouped
+- **21-feature surface baseline (condition D)** combining structural/style features with three preregistered persona-linked lexical rates, 5-fold cross-validation **grouped
   by source prompt**, fit per target column. Never a point on the similarity axis.
 - **Prompt-clustered inference** throughout: the bootstrap resamples source prompts, not texts.
 - **Self-prediction probe (A8):** given the dilemma, the persona clause and two candidate replies,
@@ -103,8 +103,9 @@ if b.degenerate:            # default: any single answer above 90%
 ```
 
 - **`gate()`** — 18 structural features (length, sentence count, type-token ratio, hedge rate, modal
-  rate, sentiment balance, second-person rate, …), **no bag-of-words**, so it measures style and not
-  topic. Cross-validation is **grouped by source prompt by default** — the part most easily got
+  rate, sentiment balance, second-person rate, …). This is a simplified general-purpose screening
+  tool; the study's historical classifier used 21 features including three persona-linked lexical
+  rates required by P10. Cross-validation is **grouped by source prompt by default** — the part most easily got
   wrong: if two texts sharing a prompt land in different folds, the classifier memorises the topic
   and the baseline inflates.
 - **`response_bias()`** — catches a predictor answering by position rather than content. Under a
@@ -112,7 +113,7 @@ if b.degenerate:            # default: any single answer above 90%
   in an accuracy column from a clean null. This caught two of our own results that would otherwise
   have published as tidy nulls.
 
-**Passing the gate is necessary, not sufficient.** A low score licenses only "*these 18 features* do
+**Passing the gate is necessary, not sufficient.** A low score licenses only "*these features* do
 not recover it", never "no cheap cue remains" — and `VO-D` passed the gate while still being
 uninformative, because the property had stopped being behaviourally expressed. Use it to *reject*
 leaky stimuli; treat a pass as the beginning of the argument.
@@ -165,9 +166,9 @@ A decision tree, not a schedule.
 | **`02_design_audit.md`** | **The preregistration.** 15 decision rows confirmed 2026-08-15 before any main-experiment call, plus amendments A1–A9 with dates, reasons, original status lines and confirmations. |
 | `Digital_Minds_Track3_Slides.pptx`, `presentation.html` | Six-slide deck, two renderings of one source. Generated. |
 | `11_video_script.md` | Five-minute two-speaker presentation script. |
-| `01`, `03`–`09` `.md` | Phase records — literature grounding, adversarial design review, model verification, calibration, pilot. Superseded by `10_report.md` for narrative purposes; still the primary evidence for their own numbers. |
+| `docs/01`, `docs/03`–`docs/09` `.md` | Phase records — literature grounding, adversarial design review, model verification, calibration, pilot. Superseded by `10_report.md` for narrative purposes; still the primary evidence for their own numbers. |
 | `tools/surface_leakage_gate.py` | The released tool. Self-contained, numpy only. |
-| `src/selfpred/` | Pinned OpenRouter client with pre-request budget guard; persona generation; prediction runner; 18-feature surface baseline; prompt-clustered bootstrap, McNemar and interaction analysis. `predict/` structurally cannot import `labels/`. |
+| `src/selfpred/` | Pinned OpenRouter client with pre-request budget guard; persona generation; prediction runner; 21-feature surface baseline; prompt-clustered bootstrap, McNemar and interaction analysis. `predict/` structurally cannot import `labels/`. |
 | `scripts/` | Verification sweeps, the run pipeline, analysis, figures, and the deliverable builders. |
 | `tests/` | 38 tests, including the ground-truth-separation assertions. |
 | `data/raw/*.jsonl` | Append-only per-call log for every phase. The reproducibility record. |
@@ -259,7 +260,7 @@ discussion, limitations, manuscript, presentation and final review are **shared*
 ```bibtex
 @misc{hattas_chinthala_2026_selfaccess,
   author = {Hattas, Ubayd and Chinthala, Jaswin},
-  title  = {Beaten by Eighteen Features: A Capability-Controlled Test of Privileged Self-Access},
+  title  = {Beaten by a Cheap Surface Classifier: A Capability-Controlled Test of Privileged Self-Access},
   year   = {2026},
   note   = {Digital Minds Research Sprint, Track 3, with Apart Research},
   url    = {https://github.com/UbaJaz/Digital_Minds_Research}

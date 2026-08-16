@@ -19,8 +19,7 @@ The design needs a hidden property that a model can recover from text but that a
 classifier cannot. That is what the pre-registered band encodes: **Self accuracy 60–80 % AND
 Baseline D ≤ 58 %**, per column, on ≥ 80 items (02 row P9). D is a logistic regression on 18
 structural features — length, sentence count, type-token ratio, hedge rate, modal rate,
-sentiment balance, second-person rate and similar. **It has no bag-of-words features**, so it
-can only see style, and it is cross-validated grouped by source prompt, so it cannot memorise
+sentiment balance, second-person rate and similar. It is a 21-feature classifier: 18 structural/style features plus three preregistered persona-linked lexical rates, and it is cross-validated grouped by source prompt, so it cannot memorise
 topics.
 
 Three persona pairs (VO-A/B/C) were written on the original scaffold. After all three failed,
@@ -55,7 +54,7 @@ to read it too.
 ### 2.1 Self-prediction tracks the surface baseline
 
 Across the eight column-results, **corr(Self, D) = +0.68**, with Self ≈ 0.44·D + 0.33. And
-**D ≥ Self in five of eight columns** — a bag of 18 structural features matches or beats the
+**D ≥ Self in five of eight columns** — the 21-feature surface classifier matches or beats the
 model at identifying which persona generated the text. VO-A's N column is the clearest case:
 D 0.766 against Self 0.610.
 

@@ -175,6 +175,8 @@ Design constraints for the persona pair (for Phase 1D):
 | `CLAUDE.md` | One line about the OpenRouter key | Extend with: project purpose, "research design in `02` is authoritative — do not change without updating the doc", budget guard rule, never print secrets |
 | Source of truth | `Track3_Strategy_Doc_Research_Focused.docx` is binary and undiffable | Optional: export a `.md` copy alongside so changes are reviewable; keep the docx as the original |
 
+Track3_Strategy_Doc_Research_Focused.docx was a pre-project planning document and is not part of the public repository; see the final design audit and report for the executed study.
+
 ---
 
 ## 5. Questions for the Council

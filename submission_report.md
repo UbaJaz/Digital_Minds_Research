@@ -1,4 +1,4 @@
-# Beaten by Eighteen Features: A Capability-Controlled Test of Privileged Self-Access
+# Beaten by a Cheap Surface Classifier: A Capability-Controlled Test of Privileged Self-Access
 
 **Ubayd Hattas** — *Computer Science, Statistics & Data Science, University of Cape Town*
 
@@ -15,7 +15,7 @@ Model-welfare work runs on self-report, so what matters is not whether a model c
 outputs but whether it beats an equal-or-lower-cost outside observer reading the same text. Asked
 which of two replies it would produce, Hermes-3 discriminated its own from a same-base sibling's:
 balanced accuracy 0.719, hit − false alarm +0.437. But a one-feature "pick the longer reply" rule
-scored 0.808 on exactly those pairs, and an 18-feature supervised classifier identified the author
+scored 0.808 on exactly those pairs, and a 21-feature supervised classifier identified the author
 at 0.831 under a different procedure. Length explains only part: where the cue points away from
 Hermes's own reply, it still discriminates (+0.381). A capability-controlled crossed 2×2 — four
 stimulus constructions on one shared 200-prompt pool, 24 cells, 9,269 trials — shows no positive raw
@@ -69,12 +69,13 @@ M, N and F predicts both columns. An additive predictor-level competence effect 
 M's cells and cancels in the interaction `(M→M − N→M) − (M→N − N→N)`. A unit test asserts that a
 pure capability effect returns zero.
 
-**The surface baseline (condition D).** D is a logistic regression on **18 structural features** —
-length, sentence count, type-token ratio, hedge rate, modal rate, sentiment balance, second-person
-rate and similar — with **no bag-of-words features**, so it reads style and not topic, and 5-fold
-cross-validated **grouped by source prompt**, so two texts sharing a prompt land in the same fold
-and topic cannot be memorised. D is never a point on the similarity axis; it is the
-operationalisation of Song et al.'s equal-or-lower-cost third party, fit per target column.
+**The surface baseline (condition D).** D is a logistic regression on **21 textual features** —
+18 structural/style statistics (length, sentence count, type-token ratio, hedge rate, modal rate,
+sentiment balance, second-person rate and similar) plus three preregistered persona-linked lexical
+rates required by P10 — 5-fold cross-validated **grouped by source prompt**, so two texts sharing
+a prompt land in the same fold and topic cannot be memorised. D is never a point on the similarity
+axis; it is the operationalisation of Song et al.'s equal-or-lower-cost third party, fit per
+target column.
 
 **Four constructions on one shared pool.** The crossed design ran on 200 main source prompts × 2
 personas per column for four persona/scaffold constructions spanning the leakage axis: 24 cells,
@@ -92,13 +93,13 @@ rows, confirmed 2026-08-15, before any main-experiment call). Nine amendments A1
 reasons and were confirmed by both authors on 2026-08-16, **after the results were known**;
 confirmation is not preregistration, and the load-bearing cases are flagged in §8.
 
-## 3. Result 1 — apparent persona prediction tracks surface style
+## 3. Result 1 — apparent persona prediction tracks surface leakage
 
 Five persona pairs × two generator columns = ten column-results, 80 items each, all bought under a
 feasibility band fixed before the pilot ran (Self 60–80% **and** D ≤ 58%, per column). **Every
 column failed, and every original-scaffold column failed on D** — while Self sat *inside* the 60–80%
 band in five of six. The models could read the persona; what they could not do was read it without
-an 18-feature style classifier reading it too. Across the ten columns **corr(Self, D) = +0.71**, and
+a 21-feature surface classifier reading it too. Across the ten columns **corr(Self, D) = +0.71**, and
 **D matches or beats the model in six of ten columns**; `VO-A`'s N column is the clearest case, D
 0.766 against Self 0.610.
 
@@ -179,7 +180,7 @@ cost is precision; the intervals above are the intervals that n supports.
 The persona property leaves one question open: does the style-equalised null mean "no privileged
 access" or merely "no readable signal for anyone"? Authorship settles the second half. **The
 information is plainly there:** a surface classifier fit to author discrimination on `VO-C` texts —
-18 features, grouped cross-validation — identifies the author **83.1%** of the time across 791
+21 features, grouped cross-validation — identifies the author **83.1%** of the time across 791
 texts.
 
 Two self-*recognition* framings failed to elicit anything: in a forced choice M answered "A" on
@@ -203,7 +204,7 @@ scores.
 | **Discrimination (hit − FA)** | **−0.107** [−0.166, −0.048] | **+0.437** [+0.349, +0.519] |
 | **Balanced accuracy** | 0.447 | **0.719** [0.675, 0.762] |
 | *Comparator (post hoc):* length-only rule, same pairs | — (see below) | **0.808** [0.768, 0.847] |
-| *Comparator:* 18-feature classifier, single-text authorship | 0.831 | 0.831 |
+| *Comparator:* 21-feature classifier, single-text authorship | 0.831 | 0.831 |
 
 **Hermes-3 predicts its own output above chance.** Balanced accuracy 0.719 with discrimination
 +0.437 is not a position artifact: Hermes is right 90.0% of the time when its own text is in slot B
@@ -218,7 +219,7 @@ pairs (median 227 words against Llama's 180), so "pick the longer reply" — one
 labels, costing nothing — scores **0.808** on exactly the pairs Hermes was asked about. That
 comparator is matched item-for-item, so a paired test is meaningful: paired difference **+0.095**
 [+0.036, +0.155] in the rule's favour, and of the 135 pairs where the two disagree the rule is right
-on 86 and Hermes on 49 (exact McNemar p = 0.0018). The 18-feature classifier's 0.831 also exceeds
+on 86 and Hermes on 49 (exact McNemar p = 0.0018). The 21-feature classifier's 0.831 also exceeds
 0.719, but it is **supervised single-text** labelling against Hermes's **zero-shot pairwise** forced
 choice — a *different evaluation procedure*, so 0.719 versus 0.831 is a comparison against a
 criterion and **no test is run between them.** The length rule and the intervals in this section are
@@ -246,7 +247,7 @@ equal-or-lower-cost third party reading the same text, and on this probe it does
 rule that never inspects model identity predicts the same outcome better overall.
 
 **Cheap external observers matter more than they are usually made to.** On the persona property
-the 18-feature classifier matched or beat the model in six of ten pilot columns and, on the leakiest
+the 21-feature classifier matched or beat the model in six of ten pilot columns and, on the leakiest
 main set, sat above every language model including the self cell. Any paradigm reporting
 above-chance self-prediction without fitting a surface-feature classifier on the same stimuli, per
 condition, **cannot by itself distinguish self-knowledge from style-reading** — a threat inherited
@@ -289,7 +290,7 @@ if response_bias(answers).degenerate:   # answers e.g. ["A", "A", "B", ...]
 ```
 
 **Passing the gate is necessary but not sufficient**, and we know that from our own use of it: a low
-score licenses only "*these 18 features* do not recover it," never "no cheap cue remains", and
+score licenses only "*the gate's 18 structural features* do not recover it," never "no cheap cue remains", and
 `VO-D` passed the gate while still being uninformative. The estimate is also noisy at pilot n — the
 same `VO-D` design scored 0.325 on 80 items and 0.551 on ≈400. It is a **candidate diagnostic with
 no external validation beyond this study**, not a validated benchmark: use it to *reject* leaky
@@ -321,7 +322,7 @@ stimuli, and treat a pass as the beginning of the argument.
 - **The §5 intervals and the whole length analysis are post hoc** (amendment A9), computed after the
   experiment from already-collected data and outside A8's declared plan — diagnostic, not
   confirmatory.
-- **The comparators are asymmetric.** The 18-feature classifier is *supervised* and labels *single*
+- **The comparators are asymmetric.** The 21-feature classifier is *supervised* and labels *single*
   texts; the models answer *zero-shot* on a *pairwise* choice. We argue the comparison is the right
   one for the hypothesis — a model with privileged access to its own output distribution should not
   need labelled examples of its own writing — but a reader who disagrees should weight the length

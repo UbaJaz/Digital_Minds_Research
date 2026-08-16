@@ -138,7 +138,7 @@ def slide_1() -> str:
   <div style="height:5px;background:var(--amber);margin:-1.5rem -3.4rem 1.6rem"></div>
   <p class="eyebrow">Digital Minds Research Sprint &middot; Track 3 &middot; Introspection &amp; Self-Report Reliability</p>
   <div class="spacer"></div>
-  <h1>Beaten by Eighteen Features</h1>
+  <h1>Beaten by a Cheap Surface Classifier</h1>
   <h2 style="color:var(--amber);font-weight:600;margin-bottom:1.6rem">A Capability-Controlled Test of Privileged Self-Access</h2>
   <div style="width:12rem;height:2px;background:var(--rule);margin:0 0 1.4rem"></div>
   <p class="lede">Does behavioural self-prediction provide information unavailable to an
@@ -152,7 +152,7 @@ def slide_1() -> str:
       <span class="mono" style="font-size:.82rem">github.com/UbaJaz/Digital_Minds_Research</span>
     </div>
   </div>
-  <div class="foot"><b>1</b> / 6 &nbsp;&nbsp;&nbsp; Beaten by Eighteen Features</div>
+  <div class="foot"><b>1</b> / 6 &nbsp;&nbsp;&nbsp; Beaten by a Cheap Surface Classifier</div>
 </section>"""
 
 
@@ -233,22 +233,24 @@ def slide_3() -> str:
     <div class="figcol">
       <figure><img src="{F1}" alt="Self-prediction accuracy against surface-baseline accuracy,
         one point per persona pair and generator column."></figure>
-      <p class="micro" style="margin-top:.6rem">Points at or below the diagonal: a stylometric
+      <p class="micro" style="margin-top:.6rem">Points at or below the diagonal: a surface/textual
         baseline matches or beats the model.</p>
     </div>
     <div>
       <p class="big" style="font-size:2.5rem;color:var(--amber);margin:0 0 .3rem">r = +0.71</p>
-      <p style="margin-bottom:1.1rem">correlation between self-prediction accuracy and the
-         18-feature surface baseline, across ten columns</p>
+      <p style="margin-bottom:.85rem">correlation between self-prediction accuracy and the
+         21-feature surface/textual baseline, across ten columns</p>
       <p class="big" style="font-size:2.5rem;color:var(--amber);margin:0 0 .3rem">6 / 10</p>
-      <p style="margin-bottom:1.1rem">columns where the surface baseline matches or beats the model
+      <p style="margin-bottom:.85rem">columns where the surface baseline matches or beats the model
          at reading its own persona</p>
       <p class="big" style="font-size:2.5rem;color:var(--blue);margin:0 0 .3rem">0.325</p>
-      <p style="margin-bottom:1.3rem">surface baseline on VO-D's M column once style is equalised
+      <p style="margin-bottom:.55rem">surface baseline on VO-D's M column once style is equalised
          &mdash; and the model falls to 0.500 with it</p>
-      <div class="caveat"><p><span class="k-red">Caveat.</span> VO-D also changed the behavioural
-        expression of the hidden property, so it is not a clean causal isolation of style: the two
-        personas largely converged on the same recommendation.</p></div>
+      <p class="micro" style="margin:0 0 .85rem">21 textual features: 18 structural/style + 3
+         preregistered persona-linked lexical rates</p>
+      <div class="caveat"><p><span class="k-red">Caveat.</span> VO-D/VO-E also changed the
+        behavioural expression of the hidden property, so they are not clean causal isolation of
+        style: the two personas largely converged on the same recommendation.</p></div>
     </div>
   </div>
   <div class="foot"><b>3</b> / 6 &nbsp;&nbsp;&nbsp; Surface leakage</div>
@@ -269,7 +271,7 @@ def slide_4() -> str:
     return f"""
 <section class="slide">
   <p class="eyebrow">Finding 2 &middot; 24 cells &middot; 9,269 scored trials &middot; zero malformed</p>
-  <h2>No self-advantage on the target column &mdash; and one positive interaction</h2>
+  <h2>No positive raw M-target advantage &mdash; and one positive interaction</h2>
   <div class="grid split" style="grid-template-columns:2.6fr 1fr;align-items:start;margin-bottom:1rem">
     <div class="scroller">
       <table>
@@ -305,32 +307,36 @@ def slide_4() -> str:
 def slide_5() -> str:
     lo, hi = 0.50, 0.90
     bars = [
-        ("Hermes-3 self-prediction", "0.719",
+        ("MODEL RESULT", "Hermes-3 self-prediction", "0.719",
          "balanced accuracy [0.675, 0.762]<br>discrimination +0.437", "var(--green)", 0.719),
-        ("Length-only observer", "0.808", "&ldquo;pick the longer reply&rdquo;<br>one feature, no training", "var(--blue)", 0.808),
-        ("18-feature surface classifier", "0.831", "supervised single-text<br>authorship labelling", "var(--amber)", 0.831),
+        ("MATCHED COMPARATOR", "Length-only observer", "0.808",
+         "&ldquo;pick the longer reply&rdquo;<br>one feature, no training", "var(--blue)", 0.808),
+        ("COST CRITERION", "21-feature surface classifier", "0.831",
+         "supervised single-text<br>authorship labelling", "var(--amber)", 0.831),
     ]
     cards = "".join(
-        f"""<div class="card">
+        f"""<div class="card" style="border-color:{c}">
+          <p class="mono" style="font-size:.72rem;letter-spacing:.08em;color:{c};margin:0 0 .25rem;
+             font-weight:700">{role}</p>
           <h3>{t}</h3>
-          <p class="big" style="font-size:2.9rem;color:{c};margin:.3rem 0 .5rem">{v}</p>
+          <p class="big" style="font-size:2.7rem;color:{c};margin:.3rem 0 .5rem">{v}</p>
           <p>{note}</p>
           <div class="track"><span style="width:{(val - lo) / (hi - lo) * 100:.1f}%;background:{c}"></span></div>
           <div class="axis"><span>0.50 chance</span><span>0.90</span></div>
-        </div>""" for t, v, note, c, val in bars)
+        </div>""" for role, t, v, note, c, val in bars)
     return f"""
 <section class="slide">
   <p class="eyebrow">Finding 3 &middot; &ldquo;which of these two replies would you produce?&rdquo; &middot; 391 pairs</p>
   <h2>Hermes-3 can predict itself. A cheaper observer still does better.</h2>
   <div class="grid cards-3" style="margin-bottom:.9rem">{cards}</div>
-  <p style="font-size:.92rem">Only the length rule is matched to the model's task item-for-item
-     <code style="color:var(--ink)">(paired difference +0.095 [+0.036, +0.155], McNemar p = 0.0018)</code>.
-     The classifier is a different evaluation procedure &mdash; a cost criterion, not a matched score.</p>
+  <p style="font-size:.92rem">The 0.831 classifier is a different evaluation procedure; the only
+     matched comparator is the length rule
+     <code style="color:var(--ink)">(paired difference +0.095 [+0.036, +0.155], McNemar p = 0.0018)</code>.</p>
   <div class="grid split" style="grid-template-columns:1.9fr 1fr;align-items:stretch;margin:.3rem 0 .9rem">
     <div class="residual">
       <p style="color:var(--ink);font-weight:700;margin-bottom:.25rem">Hermes still discriminates
          where the length cue points away from its own reply:</p>
-      <p class="big" style="font-size:1.7rem;color:var(--green);margin:0 0 .4rem">+0.381 [0.188, 0.566]</p>
+      <p class="big" style="font-size:1.7rem;color:var(--green);margin:0 0 .4rem">+0.381 [+0.188, +0.566]</p>
       <p style="font-size:.88rem;margin:0">75 pairs where a pure length strategy is actively wrong.
          This study cannot name the residual.</p>
     </div>
@@ -391,7 +397,7 @@ def slide_6() -> str:
 
 
 def build() -> str:
-    return ("<title>Beaten by Eighteen Features</title>\n"
+    return ("<title>Beaten by a Cheap Surface Classifier</title>\n"
             f"<style>{CSS}</style>\n"
             + slide_1() + slide_2() + slide_3() + slide_4() + slide_5() + slide_6() + "\n")
 

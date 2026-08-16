@@ -1,6 +1,6 @@
 # Five-minute presentation script
 
-**Beaten by Eighteen Features: A Capability-Controlled Test of Privileged Self-Access**
+**Beaten by a Cheap Surface Classifier: A Capability-Controlled Test of Privileged Self-Access**
 Ubayd Hattas · Jaswin Chinthala — Digital Minds Research Sprint, Track 3
 
 **Two speakers.** Slide cues match `Digital_Minds_Track3_Slides.pptx` / `presentation.html` (six
@@ -46,8 +46,9 @@ Second, leakage. A hidden property is only interesting if an outsider can't read
 page.
 
 **[UBAYD]**
-So we built the outsider: eighteen surface features, no bag-of-words, cross-validated grouped by
-source prompt. Privileged access means beating that — not beating chance.
+So we built the outsider: twenty-one textual features — structural style plus three persona-linked
+lexical rates required by the preregistration — cross-validated grouped by source prompt. Privileged
+access means beating that — not beating chance.
 
 ---
 
@@ -57,7 +58,7 @@ source prompt. Privileged access means beating that — not beating chance.
 
 **[JASWIN]**
 Our hidden property was a persona: two value orderings for giving advice. The models could read it —
-sixty to seventy-five percent. But so could the eighteen features. Across ten columns, model
+sixty to seventy-five percent. But so could the surface classifier. Across ten columns, model
 accuracy tracked the surface baseline at r equals plus zero point seven-one, and the baseline
 matched or beat the model in six of ten.
 
@@ -135,7 +136,7 @@ The reusable piece is small and boring, which is why people might actually run i
 only.
 
 **[UBAYD]**
-A leakage gate: before paying for a main run, check whether a trivial style classifier already
+A leakage gate: before paying for a main run, check whether a trivial surface classifier already
 solves your hidden property — grouped by prompt, or it memorises topic. And a response-bias check: a
 model that always answers "A" scores fifty percent and looks like a clean null. That caught two of
 our own results.

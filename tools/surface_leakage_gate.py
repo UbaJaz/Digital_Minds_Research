@@ -19,6 +19,14 @@ this classifier across ten conditions, and the classifier *matched or beat the m
 six of them. Two independent attempts to remove the style difference drove model accuracy
 to chance along with it. The gate costs nothing and would have changed what we ran.
 
+Note on feature count
+---------------------
+The study's historical condition-D classifier used 21 features: the 18 structural/style
+features below plus three preregistered persona-linked lexical rates (value_token_rate,
+future_token_rate, choice_token_rate) required by preregistration row P10. This released
+gate intentionally omits the three persona-specific rates so it remains task-agnostic.
+The study's full 21-feature classifier is in ``src/selfpred/baseline/surface.py``.
+
 Two rules that matter more than the code
 ----------------------------------------
 1. **Group your cross-validation by source prompt.** If two texts share a prompt (e.g. one
@@ -60,9 +68,9 @@ import numpy as np
 __all__ = ["gate", "GateResult", "response_bias", "BiasResult", "FEATURES", "featurize"]
 
 # --------------------------------------------------------------------------------------
-# Features: structural only. No bag-of-words, deliberately — the gate must measure STYLE,
-# not topic. Adding lexical features would make it a content classifier and it would pass
-# or fail for the wrong reasons.
+# Features: 18 structural/style features only. The study's historical classifier additionally
+# included three persona-linked lexical rates (P10); this released gate omits them so it
+# remains task-agnostic. See src/selfpred/baseline/surface.py for the full 21-feature set.
 # --------------------------------------------------------------------------------------
 
 HEDGES = ("maybe", "perhaps", "might", "could", "possibly", "seems", "somewhat", "fairly",

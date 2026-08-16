@@ -131,7 +131,7 @@ def figure3() -> None:
         print("skip fig3: no selfrec data"); return
     a = json.loads(q.read_text(encoding="utf-8"))
     fig, ax = plt.subplots(figsize=(6.4, 4.3))
-    labels = ["Surface baseline\n(18 features)", "Llama-3.1-70B\nasked directly",
+    labels = ["Surface baseline\n(21 features)", "Llama-3.1-70B\nasked directly",
               "Hermes-3-70B\nasked directly"]
     vals = [a["surface_baseline_authorship"], a["models"]["M"]["acc"], a["models"]["N"]["acc"]]
     cols = [ORANGE, BLUE, BLUE]
@@ -159,7 +159,7 @@ def figure4() -> None:
     d = json.loads(p.read_text(encoding="utf-8"))
     fig, ax = plt.subplots(figsize=(6.8, 4.5))
     names = ["Llama-3.1-70B\npredicting itself", "Hermes-3-70B\npredicting itself",
-             "Surface baseline\n(18 features)"]
+             "Surface baseline\n(21 features)"]
     vals = [d["M"]["balanced_accuracy"], d["N"]["balanced_accuracy"],
             d["surface_baseline_authorship"]]
     colors = [BLUE, BLUE, ORANGE]

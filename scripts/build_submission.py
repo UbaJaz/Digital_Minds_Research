@@ -32,7 +32,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SUB_MD = ROOT / "submission_report.md"
-FULL_MD = ROOT / "10_report.md"
+FULL_MD = ROOT / "docs" / "10_report.md"
 SUB_DOCX = ROOT / "Submission_Report.docx"
 SUB_PDF = ROOT / "Submission_Report.pdf"
 FULL_DOCX = ROOT / "10_Report.docx"
@@ -44,7 +44,7 @@ PAGE_LIMIT = 8
 # gfm rather than risking a brace elsewhere being reinterpreted.
 SUB_READER = "gfm+attributes"
 
-TITLE = "Beaten by Eighteen Features: A Capability-Controlled Test of Privileged Self-Access"
+TITLE = "Beaten by a Cheap Surface Classifier: A Capability-Controlled Test of Privileged Self-Access"
 AUTHORS = ["Ubayd Hattas", "Jaswin Chinthala"]
 
 # A placeholder or a retracted claim must never reach a submission file.

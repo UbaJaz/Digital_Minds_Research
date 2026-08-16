@@ -161,7 +161,7 @@ def slide_title(prs):
          size=12, font=MONO, color=MUTED, first=True, spacing=1.0)
 
     tf = textbox(s, MARGIN, Inches(1.55), Inches(11.4), Inches(2.2))
-    para(tf, "Beaten by Eighteen Features", size=50, color=INK, bold=True, first=True,
+    para(tf, "Beaten by a Cheap Surface Classifier", size=50, color=INK, bold=True, first=True,
          line=1.02, space_after=4)
     para(tf, "A Capability-Controlled Test of Privileged Self-Access", size=30, color=AMBER,
          line=1.08)
@@ -190,7 +190,7 @@ def slide_title(prs):
     para(tf, "github.com/UbaJaz/Digital_Minds_Research", size=11.5, font=MONO, color=MUTED,
          align=PP_ALIGN.RIGHT)
 
-    footer(s, 1, "Beaten by Eighteen Features")
+    footer(s, 1, "Beaten by a Cheap Surface Classifier")
 
 
 def slide_design(prs):
@@ -296,29 +296,33 @@ def slide_leakage(prs):
             cx=Inches(3.85))
 
     x = Inches(7.55)
-    stats = [("r = +0.71", "correlation between self-prediction accuracy and the 18-feature "
-                           "surface baseline, across ten columns", AMBER),
+    stats = [("r = +0.71", "correlation between self-prediction accuracy and the 21-feature "
+                           "surface/textual baseline, across ten columns", AMBER),
              ("6 / 10", "columns where the surface baseline matches or beats the model at "
                         "reading its own persona", AMBER),
              ("0.325", "surface baseline on VO-D's M column once style is equalised — and the "
                        "model falls to 0.500 with it", BLUE)]
     y = Inches(1.86)
     for v, k, col in stats:
-        tf = textbox(s, x, y, Inches(5.0), Inches(1.1))
+        tf = textbox(s, x, y, Inches(5.0), Inches(1.05))
         para(tf, v, size=28, font=MONO, color=col, bold=True, first=True, space_after=2)
         para(tf, k, size=12.5, color=MUTED, line=1.22, space_after=0)
-        y += Inches(1.18)
+        y += Inches(1.08)
 
-    rect(s, x, Inches(5.44), Inches(5.05), Inches(1.3), fill=PANEL, line=RED)
-    tf = textbox(s, x + Inches(0.18), Inches(5.58), Inches(4.7), Inches(1.05))
+    tf = textbox(s, x, Inches(5.08), Inches(5.05), Inches(0.42))
+    para(tf, "21 textual features: 18 structural/style + 3 preregistered persona-linked lexical rates",
+         size=11.5, color=DIM, first=True, line=1.2)
+
+    rect(s, x, Inches(5.52), Inches(5.05), Inches(1.22), fill=PANEL, line=RED)
+    tf = textbox(s, x + Inches(0.18), Inches(5.64), Inches(4.7), Inches(1.0))
     rich(tf, [("Caveat.  ", 12.5, RED, True, SANS),
-              ("VO-D also changed the behavioural expression of the hidden property, so it is not "
-               "a clean causal isolation of style: the two personas largely converged on the same "
-               "recommendation.", 12.5, INK, False, SANS)],
-         first=True, space_after=0, line=1.22)
+              ("VO-D/VO-E also changed the behavioural expression of the hidden property, so they "
+               "are not clean causal isolation of style: the two personas largely converged on the "
+               "same recommendation.", 12.5, INK, False, SANS)],
+         first=True, space_after=0, line=1.2)
 
     tf = textbox(s, MARGIN, Inches(6.42), Inches(6.6), Inches(0.4))
-    para(tf, "Points at or below the diagonal: a stylometric baseline matches or beats the model.",
+    para(tf, "Points at or below the diagonal: a surface/textual baseline matches or beats the model.",
          size=12, color=DIM, first=True, line=1.2)
 
     footer(s, 3, "Surface leakage")
@@ -327,7 +331,7 @@ def slide_leakage(prs):
 def slide_crossed(prs):
     s = blank(prs)
     eyebrow(s, "Finding 2  ·  24 cells  ·  9,269 scored trials  ·  zero malformed")
-    heading(s, "No self-advantage on the target column — and one positive interaction",
+    heading(s, "No positive raw M-target advantage — and one positive interaction",
             size=30)
 
     rows = [
@@ -411,25 +415,29 @@ def slide_selfpred(prs):
     eyebrow(s, "Finding 3  ·  “which of these two replies would you produce?”  ·  391 pairs")
     heading(s, "Hermes-3 can predict itself. A cheaper observer still does better.", size=30)
 
-    # three comparison columns
+    # three comparison columns — length is the matched observer; 21-feature is a cost criterion
     bars = [
-        ("0.719", "Hermes-3 self-prediction",
+        ("0.719", "Hermes-3 self-prediction", "MODEL RESULT",
          "balanced accuracy [0.675, 0.762]\ndiscrimination +0.437", GREEN, 0.719),
-        ("0.808", "Length-only observer", "“pick the longer reply”\none feature, no training",
-         BLUE, 0.808),
-        ("0.831", "18-feature surface classifier", "supervised single-text\nauthorship labelling",
-         AMBER, 0.831),
+        ("0.808", "Length-only observer", "MATCHED COMPARATOR",
+         "“pick the longer reply”\none feature, no training", BLUE, 0.808),
+        ("0.831", "21-feature surface classifier", "COST CRITERION",
+         "supervised single-text\nauthorship labelling", AMBER, 0.831),
     ]
     lo, hi = 0.50, 0.90
     bw = Inches(3.78)
     track_w = Inches(3.38)
     cy = Inches(1.72)
-    for i, (v, title, note, col, val) in enumerate(bars):
+    for i, (v, title, role, note, col, val) in enumerate(bars):
         x = MARGIN + i * (bw + Inches(0.22))
-        rect(s, x, cy, bw, Inches(2.28), fill=PANEL, line=RULE)
-        tf = textbox(s, x + Inches(0.2), cy + Inches(0.16), bw - Inches(0.4), Inches(1.5))
-        para(tf, title, size=13.5, color=INK, bold=True, first=True, space_after=2)
-        para(tf, v, size=40, font=MONO, color=col, bold=True, space_after=3)
+        # matched length gets a coloured border; criterion stays quieter
+        border = BLUE if i == 1 else (GREEN if i == 0 else RULE)
+        rect(s, x, cy, bw, Inches(2.28), fill=PANEL, line=border)
+        tf = textbox(s, x + Inches(0.2), cy + Inches(0.1), bw - Inches(0.4), Inches(1.6))
+        para(tf, role, size=9.5, font=MONO, color=col, bold=True, first=True, space_after=1,
+             spacing=1.0)
+        para(tf, title, size=13, color=INK, bold=True, space_after=2)
+        para(tf, v, size=36, font=MONO, color=col, bold=True, space_after=2)
         for ln in note.split("\n"):
             para(tf, ln, size=11.5, color=MUTED, space_after=0, line=1.16)
         # bar on an explicitly labelled 0.50-0.90 track
@@ -445,10 +453,10 @@ def slide_selfpred(prs):
 
     tf = textbox(s, MARGIN, Inches(4.06), Inches(11.9), Inches(0.5))
     rich(tf, [
-        ("Only the length rule is matched to the model's task item-for-item ", 12.5, MUTED, False, SANS),
+        ("The 0.831 classifier is a different evaluation procedure; the only matched comparator "
+         "is the length rule ", 12.5, MUTED, False, SANS),
         ("(paired difference +0.095 [+0.036, +0.155], McNemar p = 0.0018)", 12.5, INK, False, MONO),
-        (".  The classifier is a different evaluation procedure — a cost criterion, not a matched "
-         "score.", 12.5, MUTED, False, SANS),
+        (".", 12.5, MUTED, False, SANS),
     ], first=True, space_after=0)
 
     # the residual — visually distinct
@@ -457,7 +465,7 @@ def slide_selfpred(prs):
     tf = textbox(s, MARGIN + Inches(0.2), Inches(4.73), Inches(7.3), Inches(1.1))
     para(tf, "Hermes still discriminates where the length cue points away from its own reply:",
          size=13, color=INK, bold=True, first=True, space_after=2)
-    para(tf, "+0.381 [0.188, 0.566]", size=17, font=MONO, color=GREEN, bold=True, space_after=3)
+    para(tf, "+0.381 [+0.188, +0.566]", size=17, font=MONO, color=GREEN, bold=True, space_after=3)
     para(tf, "75 pairs where a pure length strategy is actively wrong. This study cannot name "
              "the residual.", size=11.5, color=MUTED, line=1.16, space_after=0)
 

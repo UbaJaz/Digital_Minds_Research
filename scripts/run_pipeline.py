@@ -576,7 +576,7 @@ def stage_selfpred(pair_id: str = "VO-C") -> None:
 
     Each item gives the model the original dilemma, the persona clause it was operating
     under, and two answers — its own and the same-base sibling's — in counterbalanced order.
-    Ground truth is which one it actually wrote. The benchmark is the same 18-feature
+    Ground truth is which one it actually wrote. The benchmark is the same 21-feature
     authorship baseline (0.831), and the answer distribution is reported alongside accuracy
     so that a constant-response artifact cannot be mistaken for a null.
     """

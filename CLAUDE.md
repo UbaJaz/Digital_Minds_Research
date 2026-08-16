@@ -2,34 +2,47 @@
 
 ## Project purpose
 
-This repository is a 3-day, two-person AI research sprint (Digital Minds Sprint, Track 3) testing
-whether a language model has a *self-prediction residual*: when a model predicts a hidden property
-(which of two value-ordering personas produced a piece of text) of its own output, does it do better
-than a tier-matched same-lineage sibling does on that same text — after the predictor's general
-classification ability is controlled by a crossed 2x2 design (each of M and N generates a column of
-texts, and M, N and F each predict both columns)? The point of the crossed design is that any
-"M is simply the better classifier" effect appears in both of M's cells and cancels in the
-interaction. A surface-feature baseline (condition D) is fit per target column purely as a
-leakage check and is never a point on the similarity axis.
+This repository is a 3-day, two-person AI research sprint (Digital Minds Sprint, Track 3) asking
+whether a language model has *privileged self-access*: does it predict its own outputs better than an
+equally-informed observer does, once the predictor's general classification ability is controlled?
+
+The control is a **crossed 2×2**: each of M and N generates a column of texts, and M, N and F each
+predict both columns, so any "M is simply the better classifier" effect appears in both of M's cells
+and cancels in the interaction `(M→M − N→M) − (M→N − N→N)`.
+
+The study's independent variable became **surface leakage**. A hidden property is only interesting
+if the model recovers it from something an outside observer cannot cheaply read off the text, so a
+surface-feature baseline (condition **D**, 18 structural features, no bag-of-words, CV grouped by
+source prompt) is fit per target column. D is never a point on the similarity axis; it is the
+operationalisation of Song et al.'s "equal-or-lower-cost third party."
+
+**The experiments are complete.** The finding is a null on self-advantage replicated across four
+stimulus sets, plus one positive self-*prediction* result (Hermes-3) that is beaten by stylometry.
 
 ## Authority
 
-**`02_design_audit.md` is the authoritative research design. Change it in the doc first, then the
-code — never the reverse.** `03_design_review_and_implementation_plan.md` and
-`notes/council-transcript-2026-08-15.md` are review and proposal only: the council's Part 4 verdict
-has **not** yet been applied to `02`. Code may be written *parameterised* so that either the crossed
-design or the M-row fallback is expressible from config, but code must not encode a research
-decision that `02` has not made. If you find yourself wanting to change a hypothesis, a condition,
-an n, or an analysis contract, stop and edit `02` first.
+- **`10_report.md` is the single document that summarises the whole project** — hypothesis, method,
+  all results, conclusion, limitations, cost. Hand this to anyone who needs the full picture.
+  Re-derive any summary from it, not from the older docs.
+- **`02_design_audit.md` is the authoritative research design / preregistration.** Rows P1–P15 are
+  signed and confirmed (2026-08-15); amendments **A1–A8** are recorded there with dates, reasons and
+  outcomes. Change the design in `02` first, then the code — never the reverse. If you find yourself
+  wanting to change a hypothesis, a condition, an n, or an analysis contract, stop and edit `02`.
+- `03_design_review_and_implementation_plan.md` and `notes/council-transcript-2026-08-15.md` are the
+  adversarial review that *produced* the crossed design. Their verdict has been applied to `02`;
+  they are historical record now.
+- `01`, `04`, `05`, `06`, `07`, `08`, `09` are phase records superseded by `10_report.md` for
+  narrative purposes, but they remain the primary evidence for their own numbers.
 
 ## Budget guard
 
-- Project ceiling: **$10.00** (hard; this is the entire experimental budget for the project).
-- Working guard: **$7.50** projected total. If the projection from verified per-token prices exceeds
-  it, n steps down 500 -> 400 -> 300 rather than the design changing.
+- Project ceiling: **$10.00** (hard; the entire experimental budget). **Spent: $3.1216.**
+- Working guard: **$7.50** projected total. If a projection from verified per-token prices exceeds
+  it, n steps down 500 → 400 → 300 rather than the design changing.
 - Per-phase sub-budgets live in `src/selfpred/config.py` (`PHASE_BUDGETS_USD`) and nowhere else.
 - Every API call goes through `client.py`. The guard projects the cost of a call *before* issuing it
   and raises `BudgetExceeded` rather than calling. Nothing else in the repo may make network calls.
+  This still holds for any follow-up run.
 
 ## Secrets
 
@@ -47,6 +60,10 @@ tracebacks; keep it that way. `.env` is in `.gitignore` — do not un-ignore it.
   It never holds the prompt text of a secret or the API key.
 - `data/raw/openrouter_models.json` — raw provider model list (large; gitignored).
 - `data/checkpoints/` — resumable run checkpoints, so an aborted run does not re-call completed items.
+- `data/results/*.json` — computed analysis outputs (`main_two_set.json` holds all four sets'
+  cell-level accuracies; `selfpred_corrected.json` the A8 self-prediction probe; also `calibration`,
+  `pilot`, `pilot_analysis`, `screen`, `discrimination`, `selfrec`, `selfrec2`).
+- `figures/fig1..fig4*.png` — the four report figures, regenerated by `scripts/make_figures.py`.
 
 ## Ground-truth separation
 
@@ -54,37 +71,59 @@ tracebacks; keep it that way. `.env` is in `.gitignore` — do not un-ignore it.
 that a built predictor prompt contains no label token, and asserts persona option order is
 counterbalanced and logged. No predictor — including Self — ever sees the hidden label.
 
-## Current state (updated 2026-08-15, post-lock)
+## Current state (updated 2026-08-15, post-report — all experiments complete)
 
-- `02_design_audit.md` **Post-Council Locked Decisions** rows P1–P15 are all confirmed (2026-08-15). The
-  design is: crossed 2×2, M = llama-3.1-70b-instruct, N = hermes-3-llama-3.1-70b, F = mistral-small-3.2-24b
-  (DeepSeek-V3 as pre-declared swap), all DeepInfra fp8; 1,000 items/cell target (500 prompts × 2 personas),
-  500 floor; SESOI 5 pp; generation temperature 1.0; shared prompts across columns (joint resampling);
-  values-ordering personas (3 candidates in `data/stimuli/personas/candidates.json`, chosen by the pilot);
-  band Self 60–80 % AND D ≤ 58 %; label-blind exclusions in `personas/quality.py`.
-- Stimuli frozen: `data/stimuli/main/` (500 main + 40 pilot prompts, hashes in FREEZE.md),
-  `data/stimuli/calibration/items.json`, `data/stimuli/personas/candidates.json`.
-- **Pipeline:** `scripts/run_pipeline.py` runs C (calibration) → D (pilot gate) → FREEZE (git commit) →
-  E (main run) → ANALYSIS, fully resumable (per-item checkpoints + `data/generated/pipeline_state.json`).
-  If a session dies mid-run: `.venv/Scripts/python scripts/run_pipeline.py` continues where it stopped.
-  Progress: `data/generated/pipeline.log`. Results: `07_calibration_results.md`, `08_pilot_results.md`,
-  `09_main_results.md`, `data/results/*.json`.
-- Docs: 03 = review + plan, 04 = model verification, 05 = status/plan audit, 06 = Hermes smoke test.
-  The pre-data report template is a template only and must be re-derived from 02 + 09 (its F is stale).
+**Models (verified by API call, all DeepInfra fp8, provider pinned):** M = `meta-llama/llama-3.1-70b-instruct`,
+N = `nousresearch/hermes-3-llama-3.1-70b` (two post-trainings of one pretrained base),
+F = `mistralai/mistral-small-3.2-24b-instruct`. No far-self swap was triggered.
 
-## Current state (updated 2026-08-15, post-pilot)
+**Phases, in order run:**
 
-- **Phase C (calibration) DONE** — `07_calibration_results.md`. A_near 0.660, A_far 0.638,
-  Δ = +0.021 [−0.064, +0.106]. Near > Far on the point estimate, so F stays Mistral-Small (no swap).
-- **Phase D (pilot) DONE — gate outcome LEVEL 3.** All four persona pairs failed the band on both
-  columns (`08_pilot_results.md`). VO-A/B/C failed on Baseline D (0.588–0.766) while Self was in
-  band in 5 of 6 columns; VO-D, written on a style-equalising scaffold under amendment A1, closed
-  the leak (D 0.325 on M) but took Self to chance (0.500).
-- **Phase E (main run) NOT RUN and not to be run** — see 02 amendment A3. There is no validated
-  hidden property, so a self-vs-other comparison would only measure who reads style better.
-  The temperature rung of the ladder was deliberately not taken (same leakage failure mode).
-- **The pilot is the result:** `09_pilot_finding.md`. Self accuracy tracks Baseline D across the
-  eight column-results (r = +0.68); D ≥ Self in 5 of 8; equalising style collapses the model's
-  within-prompt discrimination to 2/40 prompts. No self-advantage or privileged-access claim.
-- Spend $0.2953 of the $10 ceiling. Remaining work: the write-up (re-derive from 02 + 07 + 08 + 09)
-  and Jaswin's sign-off on amendments A1–A3.
+- **B (verification) DONE** — `04_model_verification.md`, `06_hermes_smoke_test.md`. 311 calls across
+  11 models; 311/311 honoured the provider pin; temperature-0 deterministic; 0% malformed on the
+  real predictor template.
+- **C (calibration) DONE** — `07_calibration_results.md`. A_near 0.660, A_far 0.638,
+  Δ = +0.021 [−0.064, +0.106]. Rule satisfied on the point estimate, but the similarity axis is
+  barely established and the report says so.
+- **D (pilot) DONE — gate outcome LEVEL 3** — `08_pilot_results.md`, `09_pilot_finding.md`.
+  All persona pairs failed the band (Self 60–80% **and** D ≤ 58%, fixed before the pilot, never
+  moved). VO-A/B/C leaked on Baseline D; VO-D and VO-E, on style-equalising scaffolds (A1, A5),
+  closed the leak and took Self to chance with it. Self accuracy tracks Baseline D across the ten
+  column-results at **r = +0.71**; D matches or beats the model in six of ten.
+- **A3 (no main run) was reversed by A4.** The pilot had produced something more useful than a pair
+  that passes the band: a pair that leaks (VO-C, D = 0.650 on M) and one that does not (VO-D,
+  D = 0.325 on M). The crossed 2×2 therefore ran as a **leakage manipulation**, declared in writing
+  before any of those cells were run.
+- **E (main crossed run) DONE** — extended by A7 to **four** stimulus sets spanning the leakage axis:
+  **24 cells, 200 prompts × 2 personas per column (~400 items/cell), 9,269 scored trials, zero
+  malformed.** Main prompts are disjoint from the pilot prompts used to select the sets.
+- **A6/A8 (self-recognition → self-prediction probe) DONE.** A6's two recognition framings were
+  **elicitation failures** (M answered "A" on 99.0%, N "B" on 98.7%; both answered "no" to 100% of
+  791 texts) and measure nothing. A8 re-ran it as Binder et al.'s self-*prediction* question.
+
+**Headline results (full numbers and CIs in `10_report.md` §4):**
+
+- **No positive self-advantage in any of the four sets** — every interval either contains zero or is
+  negative. Surface baselines span 0.54–0.85. The one significant self-advantage is *negative*
+  (VO-C, −0.033 [−0.058, −0.008]) and the one non-zero interaction (+0.089 [+0.048, +0.131]) belongs
+  to the leakiest set and is driven by M *under*-performing on N's column.
+- **The self model is never the best predictor of its own output.** On VO-C, M→M (0.603) sits below
+  both N→M (0.636) and F→M (0.628) — beaten on its own text by a different organisation's model.
+- **On style-equalised stimuli everything collapses to chance** (0.505–0.557; interaction
+  −0.006 [−0.033, +0.021], excluding the 5 pp SESOI).
+- **One positive self-prediction result: Hermes-3**, balanced accuracy **0.719**, discrimination
+  (hit − FA) **+0.437**. Llama-3.1 shows none (0.447, −0.107; 90% "A" = degenerate by the
+  pre-registered rule). **But an 18-feature logistic regression identifies the author 83.1% of the
+  time**, so the model that *can* predict itself is beaten by stylometry — failing Song et al.'s
+  criterion.
+
+**Released artifact:** `tools/surface_leakage_gate.py` — self-contained (numpy only), provides
+`gate()` and `response_bias()`, groups CV by source prompt by default. The report recommends both
+checks as reporting defaults.
+
+**Deliverables:** `10_report.md` (the report), `Digital_Minds_Track3_Slides.pptx` +
+`scripts/build_slides.py` / `build_pptx.py` (10-slide deck).
+
+**Remaining work:** fill the `⟦FILL⟧` placeholders in `10_report.md` (affiliations, GitHub URL),
+resolve the `⟦VERIFY⟧` on the reference list, and Jaswin's sign-off on amendments A1–A8.
+No further API calls are planned.

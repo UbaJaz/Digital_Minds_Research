@@ -9,7 +9,7 @@ With Apart Research · Digital Minds Research Sprint, Track 3 (Introspection & S
 
 ## Abstract
 
-Arguments about model preferences and welfare lean on model self-report. We ask whether a model predicts its own outputs better than an equally-informed observer, using a crossed 2×2 on two models sharing a pretraining base so that general competence cancels. Across four stimulus designs, 24 cells and 9,269 trials, no positive self-advantage appeared in any design. Asked directly which of two replies it would produce, one model answered by position and showed no discrimination; the other discriminated genuinely (balanced accuracy 0.719). But an 18-feature logistic regression identifies the author of the same texts 83.1% of the time, so the one model that can predict itself is beaten by stylometry — failing the standard that introspection must outperform an equal-cost third party. We release the surface-leakage gate and response-bias check that make this testable, and recommend both as defaults.
+Arguments about model preferences and welfare lean on model self-report. The question is not whether a model can predict its own outputs at all — it is whether it can do so better than an outside observer of equal or lower cost, given the same text. Asked which of two replies it would produce, Hermes-3 genuinely discriminated its own output from a same-base sibling's (balanced accuracy 0.719, hit−false-alarm +0.437), on one probe of 391 items from one stimulus set; the other model tested answered by position and showed none. An 18-feature logistic regression performed the same discrimination at 0.831. The model is zero-shot and the classifier supervised, and we run no test of the difference — but on the criterion we adopted in advance, self-prediction ability alone does not establish privileged access. The broader evidence is a crossed 2×2 on two models sharing a pretraining base, so that general competence cancels: across four stimulus designs, 24 cells and 9,269 trials, no design shows a positive self-advantage whose interval excludes zero. The pilot says why apparent self-prediction can look like more than it is — accuracy tracks the surface classifier at r = +0.71 across ten columns, and two style-equalising scaffolds drive model and baseline to chance together. We release the surface-leakage gate and response-bias check that made this visible, and recommend both as defaults for behavioural self-prediction work. We claim no absence of self-knowledge; we claim the tested ability was outperformed by a cheap external observer.
 
 **Keywords:** introspection, self-prediction, privileged access, surface leakage, capability control, digital minds
 
@@ -17,9 +17,13 @@ Arguments about model preferences and welfare lean on model self-report. We ask 
 
 ## 1. Introduction
 
-People — including researchers — treat an AI's self-report as if it knows something special about itself. This is a controlled test of whether that is true, or an illusion created by the model being statistically similar to itself.
+People — including researchers — treat an AI's self-report as if it knows something special about itself. This is a controlled test of whether that is true, or an illusion created by the model being statistically similar to itself. The test that matters is not whether a model can predict its own outputs at all. It is whether it can do so **better than an outside observer of equal or lower cost** could, working from the same text.
 
 The assumption is load-bearing well beyond philosophy of mind. Most practical work on model preferences, distress signals and welfare runs through self-report. If a model's report about itself carries no epistemic advantage over what a comparably capable outside observer could infer from the same text, those methods are measuring something other than what they claim — and both over-attribution and under-attribution of moral significance become likelier.
+
+Our most memorable single result makes that distinction concrete, and it does so from a *positive* finding. Asked which of two candidate replies it would produce — Binder et al.'s paradigm, run black-box — Hermes-3 genuinely discriminated its own text (balanced accuracy 0.719, hit−false-alarm +0.437). It can predict itself. But an 18-feature logistic regression, given the same texts, performed the same discrimination at 0.831. **Self-prediction is possible here; privileged self-access is not thereby demonstrated.** Those are two different claims, and only the second was ever the question.
+
+We attach that result's scope wherever we state it: one of the two models tested, one stimulus set (`VO-C`), 391 items, and an asymmetric comparison — the model answers zero-shot while the classifier is supervised on labelled texts (§4.3). We do not claim the gap between 0.719 and 0.831 is statistically significant and we run no test of it. Its job in this paper is to make the conceptual distinction vivid, not to carry the evidential weight. That weight is carried by the crossed 2×2 across four stimulus designs (§4.4), which is the study's primary experiment, and by the pilot that explains what the models were reading (§4.2).
 
 The literature disagrees. Binder et al. (2025) finetune a model to predict its own hypothetical behaviour, find it beats a differently-trained model finetuned on the same ground truth, and read this as introspection. Song, Hu & Mahowald (2025) test prompted self-reports against measurable internal knowledge across 21 open models and find no residual once behavioural similarity is controlled. Song, Lederman, Hu & Mahowald (2025) run the closest black-box analogue — models judging their own generation temperature — and find a null driven by an identified confound: the models were reading the *style* of the text, information equally available to any observer.
 
@@ -27,10 +31,10 @@ Two problems block a clean black-box test, and this project ran into both. The f
 
 **Our main contributions are:**
 
-1. **Apparent persona self-recognition is style-recognition.** Across five persona pairs and ten generator columns (§4.2), self-prediction accuracy correlates r = +0.71 with an 18-feature surface classifier carrying no bag-of-words features, and that classifier matches or beats the model in six of ten columns. Two independent style-equalising scaffolds, differing from each other in one sentence, drive baseline and model to chance together.
-2. **A null replicated across four independent stimulus designs** — 24 cells, 400 items per cell, 9,269 trials, surface baselines spanning 0.54–0.85 (§4.4) — under a capability control earlier black-box tests lacked. **Not one design shows a positive self-advantage whose interval excludes zero.** A single null invites the reply that the stimuli were unlucky; four, spanning the leakage axis, do not. Within it: the self model is never the best predictor of its own output, and on leaky stimuli is beaten on its own text by a model from a different organisation.
-3. **A black-box test of Binder et al.'s paradigm against a stylometric benchmark** (§4.3). Asked which of two replies it would produce, Hermes-3 discriminates genuinely (balanced accuracy 0.719, hit−false-alarm +0.437) while Llama-3.1 answers by position and shows none (−0.107). But an 18-feature logistic regression identifies the author of the same texts 83.1% of the time — so the one model that *can* predict itself is beaten by stylometry, failing Song et al.'s criterion that introspection must outperform an equal-or-lower-cost third party.
-4. **Two released defaults and a disclosed preregistration.** We release the surface-leakage gate and the response-distribution check, and recommend both as reporting requirements. The design ran on a same-base pair at one pinned quantization with a band that was never moved, a stop rule declared before the stimulus set that broke the study, and every amendment recorded with its reason — for **$3.12** of a $10 budget.
+1. **Self-prediction is possible without demonstrated privileged access** (§4.3). Asked which of two replies it would produce, Hermes-3 discriminates genuinely (balanced accuracy 0.719, hit−false-alarm +0.437) while Llama-3.1 answers by position and shows none (−0.107). An 18-feature logistic regression identifies the author of the same texts 83.1% of the time. On one probe — 391 items, one stimulus set, a zero-shot model against a supervised classifier, no significance test between them — the ability that exists is one an outside observer already has, which is what Song et al.'s criterion asks about. This is the paper's memorable result, not its strongest evidence.
+2. **Surface leakage explains apparent persona and self-prediction performance** (§4.2). Across five persona pairs and ten generator columns, self-prediction accuracy correlates r = +0.71 with an 18-feature surface classifier carrying no bag-of-words features, and that classifier matches or beats the model in six of ten columns. Two independent style-equalising scaffolds, differing from each other in one sentence, drive baseline and model to chance together.
+3. **A capability-controlled null replicated across four independent stimulus designs** — 24 cells, 400 items per cell, 9,269 trials, surface baselines spanning 0.54–0.85 (§4.4) — under a capability control earlier black-box tests lacked. **Not one design shows a positive self-advantage whose interval excludes zero.** A single null invites the reply that the stimuli were unlucky; four, spanning the leakage axis, do not. Within it: the self model is never the best predictor of its own output, and on leaky stimuli is beaten on its own text by a model from a different organisation. **This is the study's broadest and most rigorous evidence**, and the claims that need statistical weight rest here rather than on contribution 1.
+4. **Two released defaults and a disclosed preregistration.** We release the surface-leakage gate and the response-distribution check as a single dependency-light file, and recommend both as reporting requirements for behavioural self-prediction work (§5.3). The design ran on a same-base pair at one pinned quantization with a band that was never moved, a stop rule declared before the stimulus set that broke the study, and every amendment recorded with its reason — for **$3.12** of a $10 budget.
 
 ## 2. Related Work
 
@@ -42,7 +46,7 @@ Two problems block a clean black-box test, and this project ran into both. The f
 
 **Lindsey (2026).** Concept injection into the residual stream yields ~20% detection with near-zero false positives in Claude Opus 4/4.1. This needs activation access we lack; it defines a ceiling we explicitly do not reach. Our claim is strictly behavioural.
 
-**The gap.** Prior work treats surface leakage as a confound to be argued away after the fact. We measure it per stimulus set with a cross-validated classifier, gate on it before collecting the main data, and then manipulate it — which turns "was the effect just style?" from an objection into a measurement.
+**The gap: surface leakage as a general threat, not a local confound.** Song, Lederman, Hu & Mahowald identified style-reading as the mechanism behind their own null, so the confound is known and we do not claim to have found it. What is missing is an operational default. The threat is general: *any* experiment inferring introspection from above-chance prediction of a hidden property inherits it, because if the property is cheaply recoverable from the text's surface then the result cannot by itself distinguish self-knowledge from style-reading — whatever the property is, and however carefully it was chosen. Treated as an argument, it can only be answered after the fact. We instead treat it as a measurement: fit a cross-validated surface classifier per stimulus set, gate on it before collecting main data, then manipulate it. We argue this should be a default control for behavioural self-prediction work rather than an optional robustness check applied once a positive result is in hand, and we release our implementation so that it can be adopted as one (§5.3).
 
 ## 3. Methodology
 
@@ -64,13 +68,15 @@ Each of M and N generates a column of persona-paired texts; each of M, N and F p
 
 ### 3.4 Surface baseline (condition D) and the gate
 
-**D** is a logistic regression on **18 structural features** — length, sentence count, type-token ratio, hedge rate, modal rate, sentiment balance, second-person rate and similar. It has **no bag-of-words features**, so it can only see style, and it is 5-fold cross-validated *grouped by source prompt*, so it cannot memorise topics. D is never a point on the similarity axis; it is the operationalisation of Song et al.'s "equal-or-lower-cost process available to a third party."
+Predicting a hidden property is evidence of privileged access only if the property is not already cheaply recoverable from the text itself. **Condition D makes that a measurement rather than an assumption.** It is not another language model competing on the similarity axis, and it is never a point on that axis; it is the operationalisation of Song et al.'s "equal-or-lower-cost process available to a third party" — the cheapest outside observer we could build, given the same texts and nothing else.
+
+Concretely, D is a logistic regression on **18 structural features** — length, sentence count, type-token ratio, hedge rate, modal rate, sentiment balance, second-person rate and similar. It has **no bag-of-words features**, so it sees style and not topic, and it is 5-fold cross-validated *grouped by source prompt*, so it cannot memorise topics: two texts sharing a prompt always land in the same fold. If D recovers the hidden property, then an above-chance model score on that property cannot by itself distinguish self-knowledge from style-reading.
 
 The preregistered feasibility band, fixed before the pilot and never moved, is **Self accuracy 60–80% AND D ≤ 58%**, per column, on ≥80 items, both as point estimates.
 
 ### 3.5 The leakage manipulation (amendment A4)
 
-The pilot (§4.2) failed the band on all four persona pairs, and the preregistered ladder's Level 3 was taken: no main run, pilot reported as the result. That was then reversed, on the record, because the pilot had produced something more useful than a pair that passes the band: **a pair that leaks (`VO-C`, D = 0.650 on M) and a pair that does not (`VO-D`, D = 0.325 on M).**
+The pilot (§4.2) failed the band on all four persona pairs then available — a fifth, `VO-E`, followed later under amendment A5 — and the preregistered ladder's Level 3 was taken: no main run, pilot reported as the result. That was then reversed, on the record, because the pilot had produced something more useful than a pair that passes the band: **a pair that leaks (`VO-C`, D = 0.650 on M) and a pair that does not (`VO-D`, D = 0.325 on M).**
 
 The crossed 2×2 therefore runs on **both** stimulus sets, and the primary contrast is the **leakage contrast**:
 
@@ -84,6 +90,8 @@ Six earlier versions of the design were discarded, three on paper and three agai
 
 ## 4. Results
 
+Three results carry the argument. **(1)** Apparent persona prediction tracks surface style (§4.2, Figure 1). **(2)** Removing the style cue removes the apparent self-advantage, and no positive self-advantage survives anywhere in the four-set crossed design (§4.4, Figure 4) — the study's broadest evidence. **(3)** On the more direct self-prediction paradigm, one model genuinely predicts its own output, and an 18-feature classifier does it better (§4.3, Figure 3). §4.1 verifies the instrument and §4.5 reports robustness and cost. Sections appear in the order the work was done; the argument reads most naturally as 1 → 2 → 3.
+
 ### 4.1 Instrument verification and measured similarity
 
 311 metered verification calls across 11 candidate models ($0.0074) established the instrument before any experimental data: all 11 resolved and honoured an explicit provider pin with fallbacks disabled (311/311 returned the pinned provider) billing zero reasoning tokens; temperature-0 sampling was deterministic on both hosts (20/20 modal answers); and an enactment test confirmed both M and N hold a persona clause through a ~200-word answer (95% usable each) and return a clean letter on the real predictor template at full length (0% malformed). Verified prices were 5–17× below the planning assumption, removing cost as a constraint on n. That pass also caught the first leakage warning — the welfare clause's own wording (*"long-term well-being"*) paraphrased into ~8 sentences of 40 outputs — so candidate clauses were barred from those tokens and the tokens added to D's feature set. **The lexical fix was not enough**, which is what §4.2 is about. Details in Appendix J.
@@ -92,7 +100,7 @@ A calibration probe of 50 frozen paraphrase-preference items ("Which reads bette
 
 ### 4.2 The pilot is a result: persona detection is style detection
 
-Four persona pairs × two generator columns = eight column-results, 40 source prompts × 2 personas per column (80 items), all bought under the band fixed before the pilot ran.
+**The first result is that apparent persona prediction tracks surface style.** Five persona pairs × two generator columns = ten column-results, 40 source prompts × 2 personas per column (80 items), all bought under the band fixed before the pilot ran.
 
 **Table 1.** Pilot. Band: Self 60–80% **and** D ≤ 58%. CIs are prompt-clustered bootstrap.
 
@@ -136,7 +144,7 @@ It made no difference. `VO-E` M: Self 0.519, D 0.506; N: Self 0.565, D 0.581. Th
 
 ### 4.3 A second hidden property: can a model recognise or predict its own text?
 
-The persona property leaves one question open — whether the clean condition's null means "no privileged access" or merely "no readable signal for anyone." Authorship settles the second half. Every `VO-C` source prompt has an M-authored and an N-authored answer under the *same* persona clause, so the only difference between them is who wrote it, and we already own the texts.
+**The second result establishes that the task is not universally impossible — and that where a model does perform it, a cheap outside observer performs it better.** The persona property leaves one question open — whether the clean condition's null means "no privileged access" or merely "no readable signal for anyone." Authorship settles the second half. Every `VO-C` source prompt has an M-authored and an N-authored answer under the *same* persona clause, so the only difference between them is who wrote it, and we already own the texts.
 
 **The information is plainly there.** A surface classifier fit to the same authorship discrimination — 18 features, grouped cross-validation by prompt — identifies the author of a text **83.1%** of the time across 791 texts.
 
@@ -175,7 +183,9 @@ Two things follow, and they point in opposite directions.
 
 **Hermes-3 can genuinely predict its own output.** Balanced accuracy 0.719 with a discrimination of +0.437 is not a position artifact: it is right 90.0% of the time when its own text is in slot B and 53.7% when in slot A, so despite a clear B-preference it separates the two texts far better than any constant strategy could. This is a *positive* self-prediction result, and it is the one finding in this report that supports the Binder side.
 
-**It is not privileged access.** The same discrimination — which of these two same-base models wrote this text — is performed at **0.831** by an 18-feature logistic regression. Hermes-3's self-prediction is real and is beaten by stylometry. Under Song et al.'s criterion, that is precisely the test introspection has to pass and does not: a process is introspective only if it is more reliable than an equal-or-lower-cost process available to a third party.
+**It is not privileged access.** The same discrimination — which of these two same-base models wrote this text — is performed at **0.831** by an 18-feature logistic regression. **The interesting result is not that Hermes-3 cannot predict itself. It can. The interesting result is that its self-prediction is not privileged.** Under Song et al.'s criterion, that is precisely the test introspection has to pass and does not: a process is introspective only if it is more reliable than an equal-or-lower-cost process available to a third party.
+
+The scope of that claim should travel with it. This is one of the two models tested, one stimulus set, 391 items; the model answers zero-shot while the classifier is supervised; and we report no interval on either figure and no test of the difference between them, so **0.719 versus 0.831 is a comparison against a criterion, not a statistical contest.** What it supports is a conceptual point — self-prediction ability is not by itself evidence of privileged access — and not a quantitative one about how much better stylometry is.
 
 **Llama-3.1 shows no self-prediction at all.** Its discrimination is −0.107, slightly *anti*-correlated, and its answer distribution (90% "A") is degenerate by the rule fixed in advance. We claim nothing from its raw 0.460. The asymmetry between the two models is itself worth reporting: self-prediction ability here is not a property of "language models" but of a particular model, and the one that has it is the one that writes most distinctively.
 
@@ -185,7 +195,7 @@ Two things follow, and they point in opposite directions.
 
 ### 4.4 The crossed design across four stimulus sets
 
-The crossed 2×2 ran on 200 main source prompts × 2 personas per column for **four** stimulus sets spanning the leakage axis — **24 cells, ~400 items each, 9,269 scored trials, zero malformed predictions**, every self cell provider-matched. Main prompts are disjoint from the pilot prompts used to select the sets.
+**The third result is the study's broadest evidence, and the one the statistical claims rest on.** The crossed 2×2 ran on 200 main source prompts × 2 personas per column for **four** stimulus sets spanning the leakage axis — **24 cells, ~400 items each, 9,269 scored trials, zero malformed predictions**, every self cell provider-matched. Main prompts are disjoint from the pilot prompts used to select the sets.
 
 **Table 3.** All four sets, ordered by mean Baseline D. Prompt-clustered bootstrap CIs.
 
@@ -247,7 +257,7 @@ Total spend **$3.1216** of a $10 ceiling, across 5 stimulus designs, 24 crossed 
 
 Within this design, on this lineage, for this hidden property: **the apparent ability of a model to identify which of two personas produced a text is carried by surface style, and it is not self-specific.** Remove the style difference and the ability does not degrade — it disappears, with the predictor assigning both of a prompt's responses to the same persona 95% of the time. Leave the style difference in, and the model is still not the best reader of its own text: a 24B model from another organisation beats it, and an 18-feature logistic regression beats them all.
 
-This is a negative result about an *instrument*, and it generalises further than the study it was meant to serve. **Any self-prediction paradigm reporting above-chance accuracy without fitting a surface-feature classifier on the same stimuli, per condition, cannot distinguish self-knowledge from style-reading.** That baseline costs nothing — 18 features and a logistic regression — and in five of our eight pilot columns it beat the model. It should be a default reporting requirement, not an optional robustness check.
+This is a negative result about an *instrument*, and it generalises further than the study it was meant to serve. It is not only a fact about these stimuli; it is a warning about how behavioural introspection results are interpreted. **Any self-prediction paradigm reporting above-chance accuracy without fitting a surface-feature classifier on the same stimuli, per condition, cannot by itself distinguish self-knowledge from style-reading** — and the classifier that makes the distinction costs 18 features and a logistic regression. §5.3 develops that into a concrete control, with the code we used.
 
 It also reaches Song, Lederman, Hu & Mahowald's conclusion from a different direction. They found models judging their own sampling temperature were reading style; we find the same failure mode in a semantic property specifically chosen to avoid it. The property was buried in *which recommendation is made*, not in register or vocabulary, and it still leaked — through sentence length, hedge rate and sentiment balance, because a persona that endorses what someone wants writes differently from one that overrides them, whatever the instruction says.
 
@@ -259,17 +269,53 @@ The self-prediction probe (§4.3) is what closes that hole, because there the si
 
 None of this refutes Binder et al., who finetune both models on ~30k examples — a setting we do not test, and one where the self-model is trained rather than prompted. Nor does it speak to Lindsey's activation-level results, which require access we lack.
 
-### 5.3 Future work
+### 5.3 Two cheap controls for behavioural self-prediction
 
-The finding that matters is whether *any* stimulus design yields a property models can read and surface features cannot, or whether the two are inseparable for persona-like properties. Beyond that: run the leakage manipulation across several lineages; test whether a parameter-efficient sibling and a full fine-tune sibling of one base give different residuals, which would put a scale on "how much shared weight is enough"; and apply the surface-baseline gate retrospectively to published self-prediction results, where our five-of-eight columns suggest it may not be a formality.
+Two checks changed what this study ran and what it concluded. Neither is expensive, neither is novel in concept, and both are released together as one dependency-light file — `tools/surface_leakage_gate.py`, numpy only, with no other dependency on this repository.
+
+**The surface-leakage gate.** It asks one question, before a main run is paid for: *can a trivial style classifier recover my hidden property from the same stimuli?* If it can, an above-chance "the model recognised its own output" result does not distinguish self-knowledge from style-reading, because a third party with no privileged access does the same job. That is Song, Lederman, Hu & Mahowald's criterion, turned into a number you can compute in advance.
+
+The implementation is condition D from §3.4: a logistic regression over 18 structural features, no bag-of-words, 5-fold cross-validation **grouped by source prompt**. The grouping is the part most easily got wrong and it is not optional. If two texts share a source prompt — one per condition, which is the usual design — and land in different folds, the classifier can memorise the topic and the baseline inflates, so the gate reports leakage that is really an artefact of the split.
+
+What it found here, in four numbers already reported above: self-prediction accuracy tracked the classifier at **r = +0.71** across the ten pilot columns (§4.2); the classifier **matched or beat the model in six of those ten**; two style-equalising scaffolds differing in one sentence drove model and baseline to chance **together**; and on the self-prediction probe the classifier reached **0.831** where the model reached **0.719** (§4.3). The gate is what turned a failed pilot into this study's independent variable.
+
+```python
+from surface_leakage_gate import gate, response_bias
+
+r = gate(texts=texts, labels=labels, groups=prompt_ids)  # groups = source-prompt id
+if not r.passed:                                         # default threshold 0.58
+    ...  # your stimuli leak; fix them before collecting main data
+```
+
+> **Recommendation.** For behavioural self-prediction and introspection studies, report a grouped cross-validated surface-feature baseline on the same stimuli before interpreting model self-prediction as privileged access.
+
+**The response-bias check.** It catches a predictor that is answering by position rather than by content. Under a counterbalanced forced choice, a model that always answers "A" scores about 50% — which in an accuracy column is indistinguishable from a clean null.
+
+We hit this twice. In the self-recognition probe (§4.3, Figure 2), M answered "A" on 99.0% of trials and N answered "B" on 98.7%, and both answered "no" to 100% of 791 texts; reporting accuracy alone would have published "models perform at chance on self-recognition (50.3%, 49.5%)" as a finding, when nothing had been measured. The same check flagged Llama-3.1's 90% "A" rate in the self-prediction probe as degenerate by the rule fixed in advance, which is why we report its balanced accuracy and discrimination rather than its raw 0.460.
+
+```python
+b = response_bias(answers)  # e.g. ["A", "A", "B", ...]
+if b.degenerate:            # default: any single answer above 90%
+    ...  # your predictor is not answering the question
+```
+
+> **Recommendation.** Report the answer distribution beside every self-report accuracy.
+
+Neither idea is ours to claim. Song, Lederman, Hu & Mahowald identified style-reading as the mechanism behind their own null, and response bias is a standard concern wherever forced-choice responses are scored. What we contribute is the operationalisation: one file, a threshold you can preregister, grouped cross-validation by default, and a worked demonstration that applying the checks changes what a study concludes. In our hands the first reframed the experiment and the second stopped us reporting two artifacts as clean nulls.
+
+### 5.4 Future work
+
+The finding that matters is whether *any* stimulus design yields a property models can read and surface features cannot, or whether the two are inseparable for persona-like properties. Beyond that: run the leakage manipulation across several lineages; test whether a parameter-efficient sibling and a full fine-tune sibling of one base give different residuals, which would put a scale on "how much shared weight is enough"; and apply the surface-baseline gate retrospectively to published self-prediction results, where our six-of-ten columns suggest it may not be a formality.
 
 ## 6. Conclusion
 
-We set out to ask whether a model has a self-prediction residual once its general classification ability is controlled, and built a crossed design on a verified same-base pair to answer it. The pilot answered a prior question first: on the persona property, what the model recovers is style. Across four stimulus designs, 24 cells and 9,269 trials, no positive self-advantage appeared in any set, and the one non-zero capability-controlled interaction belonged to the leakiest stimuli in the study.
+Asked the question the literature actually asks — which of these two replies would you produce — one of the two models could genuinely answer it. Hermes-3 reaches a balanced accuracy of 0.719 with a discrimination of +0.437, while Llama-3.1 answers by position and shows none. That is a real self-prediction ability in one model, on one stimulus set, over 391 items.
 
-Asked the question the literature actually asks — which of these two replies would you produce — one of the two models could genuinely answer it. Hermes-3 reaches a balanced accuracy of 0.719 with a discrimination of +0.437, while Llama-3.1 answers by position and shows none. That is a real self-prediction ability in one model, and it is still beaten by an 18-feature logistic regression scoring 0.831 on the same discrimination. Self-prediction here is not privileged access; it is stylometry, performed worse than stylometry.
+An 18-feature logistic regression performs the same discrimination at 0.831. The model is zero-shot and the classifier supervised, and we run no test of the difference — but the criterion we adopted before collecting data asks whether the model beats an equal-or-lower-cost third party, and on this probe it does not. **Self-prediction is possible here. Privileged self-access is not thereby demonstrated.** Those are different claims, and only the second was ever the question.
 
-Two cheap checks would have changed what we ran, and we release both: a **surface-leakage gate** that asks whether a trivial style classifier already solves your hidden property, and a **response-bias check** that catches a predictor answering by position. The first reframed this study; the second stopped us publishing two artifacts as clean nulls. Neither costs anything, and in our hands both were decisive.
+What makes this more than one probe's result is the experiment built around it. We set out to ask whether a model has a self-prediction residual once its general classification ability is controlled, and built a crossed design on a verified same-base pair to answer it. Across four stimulus designs, 24 cells and 9,269 trials, no positive self-advantage appeared in any set, and the one non-zero capability-controlled interaction belonged to the leakiest stimuli in the study. The pilot says why: on the persona property, what the model recovers is style — accuracy tracks the surface classifier at r = +0.71 across ten columns, and equalising style drives both to chance.
+
+None of this shows that models lack self-knowledge, and our style-equalised condition could not show it: there the signal is unreadable for every predictor, not only for the self. What it shows is narrower and, we think, more useful to the field. Two cheap checks would have changed what we ran, and we release both: a **surface-leakage gate** that asks whether a trivial style classifier already solves your hidden property, and a **response-bias check** that catches a predictor answering by position. The first reframed this study; the second stopped us publishing two artifacts as clean nulls. For behavioural self-prediction and introspection work, we recommend reporting both alongside any above-chance result — before it is interpreted as privileged access.
 
 ---
 
@@ -301,11 +347,11 @@ Two cheap checks would have changed what we ran, and we release both: a **surfac
 - **Released tool:** `tools/surface_leakage_gate.py` — a single self-contained file (numpy only) providing `gate()` and `response_bias()`, the two checks this study turned on. Drop it into any self-prediction or introspection experiment; it needs no other part of this repository. It groups cross-validation by source prompt by default, because ungrouped CV inflates the baseline whenever two texts share a prompt.
 - **Code:** ⟦FILL: GitHub URL⟧ — `src/selfpred/` (pinned OpenRouter client with pre-request budget guard, persona generation, prediction runner, 18-feature surface baseline, prompt-clustered bootstrap/McNemar/interaction), `scripts/`, `tests/` (38 tests).
 - **Data:** append-only per-call JSONL for every phase; frozen calibration items and stimulus sets with content hashes; generated texts with labels stored separately from predictor inputs; `data/results/*.json`.
-- **Preregistration:** `02_design_audit.md` — 15 signed decision rows plus amendments A1–A4. Supporting records: `04_model_verification.md`, `06_hermes_smoke_test.md`, `07_calibration_results.md`, `08_pilot_results.md`, `09_pilot_finding.md`. The adversarial design review that produced the crossed design is in `03_design_review_and_implementation_plan.md`.
+- **Preregistration:** `02_design_audit.md` — 15 signed decision rows plus amendments A1–A8. Supporting records: `04_model_verification.md`, `06_hermes_smoke_test.md`, `07_calibration_results.md`, `08_pilot_results.md`, `09_pilot_finding.md`. The adversarial design review that produced the crossed design is in `03_design_review_and_implementation_plan.md`.
 
 ## Author Contributions
 
-U.H. led the experimental design and statistical reasoning, designed the calibration probe and bootstrap analysis, and implemented the client, pipeline and analysis. J.C. led the literature grounding, designed the hidden-property task and the four persona pairs including the style-equalising scaffold, and owned the pilot feasibility judgment. Both authors contributed to interpretation and to the final manuscript.
+U.H. led the experimental design and statistical reasoning, designed the calibration probe and bootstrap analysis, and implemented the client, pipeline and analysis. J.C. led the literature grounding, designed the hidden-property task and the five persona pairs including both style-equalising scaffolds, and owned the pilot feasibility judgment. Both authors contributed to interpretation and to the final manuscript.
 
 ## References
 
@@ -318,7 +364,7 @@ U.H. led the experimental design and statistical reasoning, designed the calibra
 
 ## Appendix
 
-**A.** The four persona clause pairs verbatim, and both generation scaffolds — `data/stimuli/personas/candidates.json`.
+**A.** The five persona clause pairs verbatim, and both generation scaffolds — `data/stimuli/personas/candidates.json`.
 **B.** One worked source prompt with both persona outputs under each scaffold.
 **C.** Predictor system prompt and template (frozen; 0% malformed at full input length) — `src/selfpred/predict/prompts.py`.
 **D.** Calibration probe: 50 items, A/B randomisation seed, per-model answers.
@@ -327,11 +373,11 @@ U.H. led the experimental design and statistical reasoning, designed the calibra
 **G.** Amendments A1–A8 in full, with dates, reasons and outcomes — `02_design_audit.md`.
 **H.** Cell-level accuracies for all four stimulus sets, including `VO-A` and `VO-B`, whose per-cell figures are summarised but not tabulated in §4.4 — `data/results/main_two_set.json`.
 
-**I.** Cost record by phase (verification, smoke, calibration, pilot, generation, prediction) — **total $3.1216**.
-
 **I. Six design versions discarded.** *On paper:* a **three-point regression** placing self above a near/far trend (a line through three points fits by construction); **condition D as a point on the similarity axis** (a heuristic classifier has no defensible position on a similarity continuum); **provider-label similarity**, replaced by a measured probe. *Against data:* a cheaper, better-behaved model pair (`llama-3.3-70b-instruct` + `hermes-4-70b`) that passed every mechanical check but whose members do not share a pretraining base — the base match *is* the construct, so mechanical quality lost; `gemini-3.5-flash-lite` as far-self, which rejected the reasoning-off parameter and needed a laxer decode, breaking the equal-information requirement; and three persona pairs on the original scaffold, all of which leaked. We also rejected making the weaker model the target as a conservatism hedge, because it biases toward the null.
 
 **J. Verification detail.** Per-model resolution, returned provider and quantization, per-token prices, malformed rates and temperature-0 determinism for all 11 candidates — `04_model_verification.md`, `data/raw/verification_summary.json`. Enactment smoke test with criteria declared before any call — `06_hermes_smoke_test.md`.
+
+**K. Cost record** by phase (verification, smoke, calibration, pilot, generation, prediction) — **total $3.1216**.
 
 ## LLM Usage Statement
 

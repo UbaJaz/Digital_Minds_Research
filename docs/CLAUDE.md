@@ -23,11 +23,24 @@ stimulus sets, plus one positive self-*prediction* result (Hermes-3) that is bea
 
 - **`10_report.md` is the single document that summarises the whole project** — hypothesis, method,
   all results, conclusion, limitations, cost. Hand this to anyone who needs the full picture.
-  Re-derive any summary from it, not from the older docs.
-- **`02_design_audit.md` is the authoritative research design / preregistration.** Rows P1–P15 are
-  signed and confirmed (2026-08-15); amendments **A1–A8** are recorded there with dates, reasons and
-  outcomes. Change the design in `02` first, then the code — never the reverse. If you find yourself
-  wanting to change a hypothesis, a condition, an n, or an analysis contract, stop and edit `02`.
+  Re-derive any summary from it, not from the older docs, and not from `submission_report.md`.
+- **`submission_report.md` is the judge-facing submission report**, derived from `10_report.md` and
+  capped at 8 rendered pages. It is a *shorter view of the same record*, never a second source of
+  truth: it may contain no number `10_report.md` does not.
+- **`02_design_audit.md` is the authoritative research design / preregistration.** Rows P1–P15 were
+  confirmed 2026-08-15, **before any main-experiment call**. Amendments **A1–A9** are recorded there
+  with dates, reasons and outcomes, and were **confirmed by Jaswin Chinthala and Ubayd Hattas on
+  2026-08-16, after the results were known**. **Confirmation is not preregistration** — never
+  describe an amendment as preregistered. Each original status line ("proposed/drafted in Claude
+  Code", "awaiting Jaswin's confirmation") is preserved beside its added Confirmation line; do not
+  delete them. Load-bearing chronology: **A4 = post-pilot substitution of the primary estimand;
+  A8 = the amendment introducing the self-prediction probe; A9 = post-hoc audit** (full record:
+  `notes/A9_post_hoc_audit.md`; `notes/A9_DRAFT.md` is a superseded stub). A2 is a bug fix, no
+  sign-off. **Two provenance items are still open** and must not be reconstructed: the `VO-D`/`VO-E`
+  screening date and screener, and the reason for the sample-size step-down — see
+  `notes/AUTHOR_CONFIRMATION_REQUIRED.md`. Change the design in `02` first, then the code — never
+  the reverse. If you find yourself wanting to change a hypothesis, a condition, an n, or an
+  analysis contract, stop and edit `02`.
 - `03_design_review_and_implementation_plan.md` and `notes/council-transcript-2026-08-15.md` are the
   adversarial review that *produced* the crossed design. Their verdict has been applied to `02`;
   they are historical record now.
@@ -103,27 +116,62 @@ F = `mistralai/mistral-small-3.2-24b-instruct`. No far-self swap was triggered.
 
 **Headline results (full numbers and CIs in `10_report.md` §4):**
 
-- **No positive self-advantage in any of the four sets** — every interval either contains zero or is
-  negative. Surface baselines span 0.54–0.85. The one significant self-advantage is *negative*
-  (VO-C, −0.033 [−0.058, −0.008]) and the one non-zero interaction (+0.089 [+0.048, +0.131]) belongs
-  to the leakiest set and is driven by M *under*-performing on N's column.
-- **The self model is never the best predictor of its own output.** On VO-C, M→M (0.603) sits below
-  both N→M (0.636) and F→M (0.628) — beaten on its own text by a different organisation's model.
+- **No positive self-advantage in any of the four sets *on the raw M-target contrast*
+  (M→M − N→M)** — every interval either contains zero or is negative. Always carry that
+  qualification: the capability-controlled **interaction is positive on `VO-C`**
+  (+0.089 [+0.048, +0.131]) and must never be hidden. Surface baselines span 0.54–0.85. The one
+  significant raw self-advantage is *negative* (VO-C, −0.033 [−0.058, −0.008]), and the positive
+  interaction is driven by M *under*-performing on N's column, so the estimator cannot separate it
+  from a genuine self-advantage — a diagnosis, not an adjudication.
+- **On `VO-C`'s M column the self model is the worst predictor of its own output:** M→M (0.603)
+  sits below both N→M (0.636) and F→M (0.628) — beaten on its own text by a different
+  organisation's model. **Say "on VO-C's M column", not "never":** on `VO-C`'s N column the self
+  cell is nominally highest (N→N 0.766 against F→N 0.763), a 0.003 margin not to be interpreted.
 - **On style-equalised stimuli everything collapses to chance** (0.505–0.557; interaction
-  −0.006 [−0.033, +0.021], excluding the 5 pp SESOI).
-- **One positive self-prediction result: Hermes-3**, balanced accuracy **0.719**, discrimination
-  (hit − FA) **+0.437**. Llama-3.1 shows none (0.447, −0.107; 90% "A" = degenerate by the
-  pre-registered rule). **But an 18-feature logistic regression identifies the author 83.1% of the
-  time**, so the model that *can* predict itself is beaten by stylometry — failing Song et al.'s
-  criterion.
+  −0.006 [−0.033, +0.021], excluding the applicable SESOI — row P5 gives 5 pp for a simple
+  contrast and 8 pp for the interaction at the achieved n).
+- **One positive self-prediction result: Hermes-3**, balanced accuracy **0.719** [0.675, 0.762],
+  discrimination (hit − FA) **+0.437** [+0.349, +0.519]. Llama-3.1 shows none (0.447, −0.107); its
+  A-share is **0.897 — just *under* the 0.90 threshold, so the degeneracy rule did not formally
+  fire**, and the report says so rather than rounding it up. **Cost comparators, not matched
+  scores:** a one-feature "pick the longer reply" rule scores **0.808** on exactly Hermes's 391
+  pairs (matched item-for-item, so a paired test is reported), and an 18-feature logistic regression
+  labels the author at **0.831** under a *different, supervised* procedure — **0.719 vs 0.831 is a
+  criterion comparison, not a statistical contest, and no test is run between them.** But length
+  does not explain the residual: where the length cue points away from Hermes's own reply it still
+  discriminates at **+0.381** [+0.188, +0.566], mechanism unresolved. The §4.3 intervals and the
+  whole length analysis are **post hoc** (A9).
 
 **Released artifact:** `tools/surface_leakage_gate.py` — self-contained (numpy only), provides
 `gate()` and `response_bias()`, groups CV by source prompt by default. The report recommends both
 checks as reporting defaults.
 
-**Deliverables:** `10_report.md` (the report), `Digital_Minds_Track3_Slides.pptx` +
-`scripts/build_slides.py` / `build_pptx.py` (10-slide deck).
+**Deliverables (final packaging pass, 2026-08-16).** Two reports, and they are not interchangeable:
 
-**Remaining work:** fill the `⟦FILL⟧` placeholders in `10_report.md` (affiliations, GitHub URL),
-resolve the `⟦VERIFY⟧` on the reference list, and Jaswin's sign-off on amendments A1–A8.
-No further API calls are planned.
+- **`submission_report.md` is the judge-facing submission report** — hand-authored, **8 rendered
+  pages (hard maximum)**, three core figures, ~4,300 words → `Submission_Report.docx` and
+  `Submission_Report.pdf`.
+- **`10_report.md` remains the full technical record** — all methods, tables, appendices A–K,
+  verification, provenance, cost → `10_Report.docx`. **Re-derive any summary from `10_report.md`,
+  and put no number in `submission_report.md` that is not in it** — `scripts/build_submission.py`
+  fails the build otherwise, as it does on a placeholder, a dropped disclosure or a 9th page.
+
+Both `.docx` and the `.pdf` come from `scripts/build_submission.py` (needs pandoc + a Chrome
+binary). The **six-slide** deck is `Digital_Minds_Track3_Slides.pptx` + `presentation.html`
+(`scripts/build_pptx.py`, `scripts/build_slides.py`) — it is the approved baseline; change wording
+and numbers, not the design. Also `11_video_script.md` (five-minute two-speaker script) and
+`README.md`. Repository: <https://github.com/UbaJaz/Digital_Minds_Research>. **Never hand-edit a
+derived artifact — regenerate it**, or the corrections silently diverge.
+
+The condensed report (`10_report_condensed.md` and its `.docx`, `scripts/build_condensed.py`,
+`scripts/build_docx.py`) was **retired** in that pass — `submission_report.md` replaces it, and two
+competing short reports is exactly the ambiguity to avoid. Files kept, removed and why:
+`notes/FINAL_REPO_AUDIT.md` (current) and `notes/PUBLIC_REPO_MANIFEST.md`; submission checklist:
+`notes/FINAL_SUBMISSION_CHECKLIST.md`; the earlier `notes/FINAL_ARTIFACT_AUDIT.md` is superseded
+where the two disagree.
+
+**Remaining work:** none blocking submission. Two provenance items stay open by design and must not
+be reconstructed — the `VO-D`/`VO-E` screening date/screener, and the reason for the sample-size
+step-down (`notes/AUTHOR_CONFIRMATION_REQUIRED.md` §2.2, §2.3). Desirable but not done: commit
+scripts for the ad-hoc manipulation-check overlap figures and the post-hoc §4.3 length analysis
+(`notes/A9_post_hoc_audit.md` §5.1). No further API calls are planned.

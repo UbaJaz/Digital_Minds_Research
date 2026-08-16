@@ -86,9 +86,11 @@ def figure2() -> None:
     ax.set_xticklabels([lab for _, lab, _ in have], fontsize=9)
     ax.set_xlim(-0.5, len(have) - 0.5)
     ax.set_ylabel("Self-advantage:  acc(M→M) − acc(N→M)")
-    # Title states what the data show, not what was predicted: the self-advantage is
-    # negative where style leaks and exactly zero once it is removed.
-    ax.set_title("No self-advantage in either condition")
+    # Title states what the data show, not what was predicted, and names the estimand:
+    # this panel is the RAW M-target contrast, negative where style leaks and zero once
+    # it is removed. The capability-controlled interaction is a different quantity and is
+    # positive on VO-C; do not let the title be read as covering it.
+    ax.set_title("Raw M-target self-advantage is non-positive")
 
     # -- right: all six cells per set ---------------------------------------------------
     ax = axes[1]

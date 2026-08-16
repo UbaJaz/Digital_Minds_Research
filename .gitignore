@@ -25,8 +25,16 @@ data/checkpoints/
 # Per-call verification/experiment logs ARE the reproducibility record -> tracked.
 # (data/raw/verification.jsonl is deliberately not ignored.)
 
-# --- os / editor ---
+# --- os / editor / office ---
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/
+# Word/PowerPoint lock files. Not documents; one was committed by accident once.
+~$*
+.claude/*.lock
+
+# --- transient build scratch ---
+# scripts/build_submission.py writes this inside the repo so figures/ resolves, then
+# deletes it; ignored so an interrupted run cannot leave it behind in a commit.
+_submission_render.html

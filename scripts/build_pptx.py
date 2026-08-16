@@ -1,7 +1,14 @@
-"""Build the submission slide deck as a .pptx.
+"""Build the submission slide deck as a .pptx — six slides.
 
-Same content as presentation.html, as a real PowerPoint file so it can be opened,
-edited and presented locally.
+Same content and visual language as presentation.html, as a real PowerPoint file so it
+can be opened, edited and presented locally.
+
+The palette and typography are carried over from the team's previous hackathon deck
+(AfriGuard, June 2026): dark ground, Calibri, one amber accent for figures, blue for the
+external observer, red reserved for caveats. Report figures are light-background PNGs and
+are placed on white cards deliberately — they read as printed exhibits, not as chrome.
+
+Every number on these slides comes from 10_report.md. Nothing is computed here.
 
 Run:  .venv/Scripts/python scripts/build_pptx.py  ->  Digital_Minds_Track3_Slides.pptx
 """
@@ -12,31 +19,37 @@ from pathlib import Path
 
 from pptx import Presentation
 from pptx.dml.color import RGBColor
-from pptx.enum.text import PP_ALIGN
+from pptx.enum.shapes import MSO_SHAPE
+from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.util import Emu, Inches, Pt
 
 ROOT = Path(__file__).resolve().parents[1]
 FIG = ROOT / "figures"
 OUT = ROOT / "Digital_Minds_Track3_Slides.pptx"
 
-# Palette: cool instrument neutrals, one measured accent, one semantic flag colour.
-INK = RGBColor(0x12, 0x17, 0x1F)
-MUTED = RGBColor(0x59, 0x63, 0x6F)
-ACCENT = RGBColor(0x0F, 0x6E, 0x8C)
-FLAG = RGBColor(0xB0, 0x3A, 0x26)
-GROUND = RGBColor(0xF6, 0xF8, 0xFA)
-RULE = RGBColor(0xDC, 0xE2, 0xE8)
+# ---- palette (carried from the AfriGuard deck) ----------------------------------------
+GROUND = RGBColor(0x0D, 0x11, 0x17)
+PANEL = RGBColor(0x16, 0x1B, 0x22)
+PANEL2 = RGBColor(0x1A, 0x1F, 0x2E)
+RULE = RGBColor(0x2A, 0x32, 0x3C)
+INK = RGBColor(0xE9, 0xEE, 0xF4)
+MUTED = RGBColor(0x98, 0xA3, 0xB0)
+DIM = RGBColor(0x6B, 0x76, 0x83)
+AMBER = RGBColor(0xF0, 0xC0, 0x40)
+BLUE = RGBColor(0x4A, 0x90, 0xD9)
+RED = RGBColor(0xE2, 0x4A, 0x4A)
+GREEN = RGBColor(0x4A, 0x9B, 0x4A)
 WHITE = RGBColor(0xFF, 0xFF, 0xFF)
 
-SERIF = "Georgia"
-SANS = "Segoe UI"
+SANS = "Calibri"
 MONO = "Consolas"
 
 W, H = Inches(13.333), Inches(7.5)
-MARGIN = Inches(0.9)
+MARGIN = Inches(0.72)
 BODY_W = W - MARGIN * 2
 
 
+# ---- primitives -----------------------------------------------------------------------
 def new_deck() -> Presentation:
     prs = Presentation()
     prs.slide_width, prs.slide_height = W, H
@@ -45,9 +58,9 @@ def new_deck() -> Presentation:
 
 def blank(prs: Presentation, ground: RGBColor = GROUND):
     s = prs.slides.add_slide(prs.slide_layouts[6])
-    bg = s.background.fill
-    bg.solid()
-    bg.fore_color.rgb = ground
+    fill = s.background.fill
+    fill.solid()
+    fill.fore_color.rgb = ground
     return s
 
 
@@ -55,6 +68,7 @@ def textbox(slide, x, y, w, h):
     tb = slide.shapes.add_textbox(x, y, w, h)
     tf = tb.text_frame
     tf.word_wrap = True
+    tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
     return tf
 
 
@@ -75,249 +89,471 @@ def para(tf, text, *, size, font=SANS, color=INK, bold=False, space_after=8,
     return p
 
 
-def eyebrow(slide, text, y=Inches(0.62)):
-    tf = textbox(slide, MARGIN, y, BODY_W, Inches(0.4))
-    para(tf, text, size=11, font=MONO, color=MUTED, first=True, caps=True, spacing=1.4)
+def rich(tf, runs, *, first=False, space_after=8, line=1.28, align=PP_ALIGN.LEFT):
+    """One paragraph, several differently-styled runs: (text, size, colour, bold, font)."""
+    p = tf.paragraphs[0] if first else tf.add_paragraph()
+    p.alignment = align
+    p.line_spacing = line
+    p.space_after = Pt(space_after)
+    for text, size, color, bold, font in runs:
+        r = p.add_run()
+        r.text = text
+        r.font.size, r.font.name, r.font.bold = Pt(size), font, bold
+        r.font.color.rgb = color
+    return p
 
 
-def rail(slide, num):
-    """Slide number on a thin rule — this is a linear talk, so the ordinal is real information."""
-    tf = textbox(slide, MARGIN, H - Inches(0.75), Inches(2), Inches(0.35))
-    para(tf, f"{num:02d}", size=11, font=MONO, color=ACCENT, first=True, spacing=0.8)
-    ln = slide.shapes.add_shape(1, MARGIN, H - Inches(0.95), BODY_W, Emu(9525))
-    ln.fill.solid(); ln.fill.fore_color.rgb = RULE
-    ln.line.fill.background(); ln.shadow.inherit = False
+def rect(slide, x, y, w, h, fill=PANEL, line=None, shape=MSO_SHAPE.RECTANGLE):
+    sh = slide.shapes.add_shape(shape, x, y, w, h)
+    sh.fill.solid()
+    sh.fill.fore_color.rgb = fill
+    if line is None:
+        sh.line.fill.background()
+    else:
+        sh.line.color.rgb = line
+        sh.line.width = Pt(1)
+    sh.shadow.inherit = False
+    return sh
 
 
-def heading(slide, text, y=Inches(1.05), size=40, w=None):
-    tf = textbox(slide, MARGIN, y, w or BODY_W, Inches(1.5))
-    para(tf, text, size=size, font=SERIF, color=INK, bold=True, first=True, line=1.05)
+def eyebrow(slide, text, y=Inches(0.52)):
+    tf = textbox(slide, MARGIN, y, BODY_W, Inches(0.34))
+    para(tf, text, size=11.5, font=MONO, color=AMBER, first=True, caps=True, spacing=1.6)
+
+
+def heading(slide, text, y=Inches(0.95), size=34, color=INK, w=None):
+    tf = textbox(slide, MARGIN, y, w or BODY_W, Inches(1.1))
+    para(tf, text, size=size, color=color, bold=True, first=True, line=1.06)
     return tf
 
 
-def body_text(slide, blocks, y, w=None, size=16):
-    tf = textbox(slide, MARGIN, y, w or Inches(9.6), H - y - Inches(1.1))
-    for i, b in enumerate(blocks):
-        if isinstance(b, tuple):
-            txt, kw = b
-        else:
-            txt, kw = b, {}
-        para(tf, txt, size=kw.pop("size", size), color=kw.pop("color", INK),
-             bold=kw.pop("bold", False), first=(i == 0), space_after=kw.pop("space_after", 12),
-             line=1.3, **kw)
-    return tf
+def footer(slide, num, label):
+    """Slide number and section label on a hairline — a linear talk, so ordinals inform."""
+    ln = rect(slide, MARGIN, H - Inches(0.62), BODY_W, Emu(9525), fill=RULE)
+    ln.shadow.inherit = False
+    tf = textbox(slide, MARGIN, H - Inches(0.5), BODY_W, Inches(0.3))
+    rich(tf, [(f"{num}", 10.5, AMBER, True, MONO),
+              (f"  /  6     {label}", 10.5, DIM, False, MONO)], first=True, space_after=0)
 
 
-def bullets(slide, items, y, size=15):
-    tf = textbox(slide, MARGIN, y, Inches(10.2), H - y - Inches(1.1))
-    for i, (lead, rest, col) in enumerate(items):
-        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
-        p.space_after = Pt(13); p.line_spacing = 1.3
-        r = p.add_run(); r.text = "— "
-        r.font.size, r.font.name, r.font.color.rgb = Pt(size), SANS, ACCENT
-        if lead:
-            r2 = p.add_run(); r2.text = lead
-            r2.font.size, r2.font.name, r2.font.bold = Pt(size), SANS, True
-            r2.font.color.rgb = col or INK
-        r3 = p.add_run(); r3.text = rest
-        r3.font.size, r3.font.name = Pt(size), SANS
-        r3.font.color.rgb = col or INK
-
-
-def picture(slide, name, y=Inches(2.0), height=Inches(4.4)):
+def picture(slide, name, y, height, cx=None, pad=Inches(0.14)):
+    """Light-background report figure, matted on a white card so it reads as an exhibit."""
     img = FIG / name
     pic = slide.shapes.add_picture(str(img), Inches(0), y, height=height)
-    pic.left = int((W - pic.width) / 2)
+    left = int(((cx or W) - pic.width) / 2) if cx is None else int(cx - pic.width / 2)
+    pic.left = left
+    card = rect(slide, left - pad, y - pad, pic.width + pad * 2, pic.height + pad * 2, fill=WHITE)
+    card.shadow.inherit = False
+    # add_shape draws above the picture; push the card behind it
+    sp = card._element
+    sp.getparent().remove(sp)
+    pic._element.addprevious(sp)
     return pic
 
 
-def caption(slide, text, y):
-    tf = textbox(slide, MARGIN, y, BODY_W, Inches(0.8))
-    para(tf, text, size=12, color=MUTED, first=True, line=1.25, align=PP_ALIGN.CENTER)
+# ---- slides ---------------------------------------------------------------------------
+def slide_title(prs):
+    s = blank(prs)
+    rect(s, Inches(0), Inches(0), W, Inches(0.09), fill=AMBER)
+
+    tf = textbox(s, MARGIN, Inches(0.72), BODY_W, Inches(0.3))
+    para(tf, "Digital Minds Research Sprint  ·  Track 3  ·  Introspection & Self-Report Reliability",
+         size=12, font=MONO, color=MUTED, first=True, spacing=1.0)
+
+    tf = textbox(s, MARGIN, Inches(1.55), Inches(11.4), Inches(2.2))
+    para(tf, "Beaten by Eighteen Features", size=50, color=INK, bold=True, first=True,
+         line=1.02, space_after=4)
+    para(tf, "A Capability-Controlled Test of Privileged Self-Access", size=30, color=AMBER,
+         line=1.08)
+
+    bar = rect(s, MARGIN, Inches(3.72), Inches(2.6), Emu(19050), fill=RULE)
+    bar.shadow.inherit = False
+
+    tf = textbox(s, MARGIN, Inches(4.05), Inches(9.6), Inches(1.0))
+    para(tf, "Does behavioural self-prediction provide information unavailable to an "
+             "external observer?", size=21, color=MUTED, first=True, line=1.28)
+
+    # authors
+    for i, (name, aff) in enumerate([
+        ("Ubayd Hattas", "Computer Science, Statistics & Data Science\nUniversity of Cape Town"),
+        ("Jaswin Chinthala", "Electrical Engineering\nUniversity of Cape Town"),
+    ]):
+        x = MARGIN + i * Inches(4.3)
+        tf = textbox(s, x, Inches(5.55), Inches(4.0), Inches(1.1))
+        para(tf, name, size=16, color=INK, bold=True, first=True, space_after=3)
+        for j, ln in enumerate(aff.split("\n")):
+            para(tf, ln, size=12, color=MUTED, space_after=1, line=1.2)
+
+    tf = textbox(s, W - MARGIN - Inches(3.6), Inches(5.55), Inches(3.6), Inches(1.1))
+    para(tf, "9,269 scored trials  ·  $3.12", size=13, font=MONO, color=AMBER, bold=True,
+         first=True, align=PP_ALIGN.RIGHT, space_after=3)
+    para(tf, "github.com/UbaJaz/Digital_Minds_Research", size=11.5, font=MONO, color=MUTED,
+         align=PP_ALIGN.RIGHT)
+
+    footer(s, 1, "Beaten by Eighteen Features")
+
+
+def slide_design(prs):
+    s = blank(prs)
+    eyebrow(s, "The question, and the design that can answer it")
+    heading(s, "Privileged access means beating a cheap observer", size=31)
+
+    tf = textbox(s, MARGIN, Inches(1.58), Inches(11.9), Inches(0.6))
+    rich(tf, [
+        ("Two confounds block any black-box test. ", 14.5, INK, True, SANS),
+        ("The self predictor is usually also the strongest model in the comparison, and a hidden "
+         "property may simply be legible in the text. We remove the first by construction and turn "
+         "the second into a measurement.", 14.5, MUTED, False, SANS),
+    ], first=True, space_after=0)
+
+    # --- the three models
+    models = [
+        ("M", "TARGET", "Llama-3.1-70B", "generates a column;\npredicts both", GREEN),
+        ("N", "SIBLING", "Hermes-3-70B", "same pretrained base;\ndifferent post-training", BLUE),
+        ("F", "FAR OBSERVER", "Mistral-Small-24B", "different organisation,\nbase and family", MUTED),
+    ]
+    cy = Inches(2.48)
+    for i, (k, role, name, note, col) in enumerate(models):
+        x = MARGIN + i * Inches(2.62)
+        rect(s, x, cy, Inches(2.42), Inches(1.66), fill=PANEL, line=RULE)
+        tf = textbox(s, x + Inches(0.16), cy + Inches(0.14), Inches(2.1), Inches(0.34))
+        rich(tf, [(k + "   ", 20, col, True, MONO), (role, 10, DIM, True, MONO)],
+             first=True, space_after=0)
+        tf = textbox(s, x + Inches(0.16), cy + Inches(0.62), Inches(2.1), Inches(0.95))
+        para(tf, name, size=13.5, color=INK, bold=True, first=True, space_after=4)
+        for ln in note.split("\n"):
+            para(tf, ln, size=11.5, color=MUTED, space_after=0, line=1.16)
+
+    # --- the crossed grid
+    gx = MARGIN + Inches(8.15)
+    tf = textbox(s, gx, cy - Inches(0.3), Inches(4.4), Inches(0.28))
+    para(tf, "CROSSED 2×2 — 24 CELLS", size=10.5, font=MONO, color=AMBER, first=True,
+         bold=True, spacing=1.2)
+    cw, ch = Inches(1.28), Inches(0.4)
+    tf = textbox(s, gx + Inches(1.05), cy - Inches(0.02), cw * 2 + Inches(0.1), Inches(0.26))
+    para(tf, "M's texts      N's texts", size=10.5, font=MONO, color=DIM, first=True)
+    for r_i, pred in enumerate(["M", "N", "F"]):
+        y = cy + Inches(0.26) + r_i * (ch + Inches(0.06))
+        tf = textbox(s, gx, y + Inches(0.08), Inches(1.0), Inches(0.28))
+        para(tf, f"{pred} predicts", size=11, font=MONO, color=MUTED, first=True)
+        for c_i, colname in enumerate(["M", "N"]):
+            is_self = pred == colname
+            box = rect(s, gx + Inches(1.05) + c_i * (cw + Inches(0.1)), y, cw, ch,
+                       fill=RGBColor(0x1F, 0x33, 0x24) if is_self else PANEL2,
+                       line=GREEN if is_self else RULE)
+            btf = box.text_frame
+            btf.margin_left = btf.margin_right = btf.margin_top = btf.margin_bottom = 0
+            btf.vertical_anchor = MSO_ANCHOR.MIDDLE
+            para(btf, f"{pred}→{colname}" + ("  self" if is_self else ""), size=11,
+                 font=MONO, color=GREEN if is_self else MUTED, bold=is_self, first=True,
+                 align=PP_ALIGN.CENTER)
+    # baseline strip, directly under the grid
+    dy = cy + Inches(0.26) + 3 * (ch + Inches(0.06)) + Inches(0.06)
+    rect(s, gx, dy, Inches(3.71), Inches(0.42), fill=PANEL, line=AMBER)
+    dtf = textbox(s, gx + Inches(0.14), dy + Inches(0.1), Inches(3.5), Inches(0.3))
+    rich(dtf, [("D  ", 12, AMBER, True, MONO),
+               ("surface baseline — the cheap third party", 11.5, INK, False, SANS)],
+         first=True, space_after=0)
+
+    tf = textbox(s, MARGIN, Inches(4.62), Inches(11.9), Inches(1.5))
+    rich(tf, [
+        ("Capability cancels. ", 14, GREEN, True, SANS),
+        ("An additive competence edge appears in both of M's cells, so it drops out of the "
+         "interaction  ", 14, MUTED, False, SANS),
+        ("(M→M − N→M) − (M→N − N→N)", 13, INK, True, MONO),
+        (".", 14, MUTED, False, SANS),
+    ], first=True, space_after=6)
+    rich(tf, [
+        ("Leakage becomes the variable. ", 14, AMBER, True, SANS),
+        ("Four stimulus constructions on one shared 200-prompt pool, spanning surface baselines "
+         "0.54–0.85, with D fit per target column and gated on ", 14, MUTED, False, SANS),
+        ("before", 14, INK, True, SANS),
+        (" main data is collected.", 14, MUTED, False, SANS),
+    ], space_after=6)
+    rich(tf, [
+        ("The criterion. ", 14, BLUE, True, SANS),
+        ("Privileged access requires beating an equal-or-lower-cost observer reading the same "
+         "text — not merely beating chance.", 14, MUTED, False, SANS),
+    ], space_after=0)
+
+    rect(s, MARGIN, Inches(6.18), BODY_W, Inches(0.52), fill=PANEL2)
+    stf = textbox(s, MARGIN + Inches(0.2), Inches(6.31), BODY_W - Inches(0.4), Inches(0.3))
+    rich(stf, [
+        ("Ground truth is constructed, not elicited. ", 12.5, INK, True, SANS),
+        ("The label lives where the prediction code structurally cannot import it — no predictor, "
+         "including Self, ever sees it.", 12.5, MUTED, False, SANS),
+    ], first=True, space_after=0)
+
+    footer(s, 2, "Question and design")
+
+
+def slide_leakage(prs):
+    s = blank(prs)
+    eyebrow(s, "Finding 1  ·  the pilot, five persona pairs, ten generator columns")
+    heading(s, "Persona prediction tracks a cheap surface signal")
+
+    picture(s, "fig1_self_vs_surface.png", y=Inches(1.85), height=Inches(4.35),
+            cx=Inches(3.85))
+
+    x = Inches(7.55)
+    stats = [("r = +0.71", "correlation between self-prediction accuracy and the 18-feature "
+                           "surface baseline, across ten columns", AMBER),
+             ("6 / 10", "columns where the surface baseline matches or beats the model at "
+                        "reading its own persona", AMBER),
+             ("0.325", "surface baseline on VO-D's M column once style is equalised — and the "
+                       "model falls to 0.500 with it", BLUE)]
+    y = Inches(1.86)
+    for v, k, col in stats:
+        tf = textbox(s, x, y, Inches(5.0), Inches(1.1))
+        para(tf, v, size=28, font=MONO, color=col, bold=True, first=True, space_after=2)
+        para(tf, k, size=12.5, color=MUTED, line=1.22, space_after=0)
+        y += Inches(1.18)
+
+    rect(s, x, Inches(5.44), Inches(5.05), Inches(1.3), fill=PANEL, line=RED)
+    tf = textbox(s, x + Inches(0.18), Inches(5.58), Inches(4.7), Inches(1.05))
+    rich(tf, [("Caveat.  ", 12.5, RED, True, SANS),
+              ("VO-D also changed the behavioural expression of the hidden property, so it is not "
+               "a clean causal isolation of style: the two personas largely converged on the same "
+               "recommendation.", 12.5, INK, False, SANS)],
+         first=True, space_after=0, line=1.22)
+
+    tf = textbox(s, MARGIN, Inches(6.42), Inches(6.6), Inches(0.4))
+    para(tf, "Points at or below the diagonal: a stylometric baseline matches or beats the model.",
+         size=12, color=DIM, first=True, line=1.2)
+
+    footer(s, 3, "Surface leakage")
+
+
+def slide_crossed(prs):
+    s = blank(prs)
+    eyebrow(s, "Finding 2  ·  24 cells  ·  9,269 scored trials  ·  zero malformed")
+    heading(s, "No self-advantage on the target column — and one positive interaction",
+            size=30)
+
+    rows = [
+        ("Stimulus set", "Surface D\n(M / N col)", "Self-advantage\nM→M − N→M",
+         "Capability-controlled\ninteraction", None),
+        ("VO-D  style-equalised", "0.55 / 0.54", "+0.000 [−0.015, +0.015]",
+         "−0.006 [−0.033, +0.021]", None),
+        ("VO-B  original", "0.65 / 0.75", "+0.000 [−0.033, +0.035]",
+         "+0.005 [−0.040, +0.050]", None),
+        ("VO-A  original", "0.66 / 0.75", "+0.020 [−0.015, +0.056]",
+         "−0.030 [−0.079, +0.018]", None),
+        ("VO-C  leakiest", "0.69 / 0.85", "−0.033 [−0.058, −0.008]",
+         "+0.089 [+0.048, +0.131]", AMBER),
+    ]
+    top = Inches(1.78)
+    tbl = s.shapes.add_table(len(rows), 4, MARGIN, top, Inches(9.0), Inches(2.5)).table
+    for w, col in zip((Inches(2.35), Inches(1.55), Inches(2.55), Inches(2.55)), tbl.columns):
+        col.width = w
+    for ri, row in enumerate(rows):
+        hi = row[4]
+        for ci, val in enumerate(row[:4]):
+            cell = tbl.cell(ri, ci)
+            cell.text = val
+            cell.margin_left = cell.margin_right = Inches(0.1)
+            cell.vertical_anchor = MSO_ANCHOR.MIDDLE
+            for p in cell.text_frame.paragraphs:
+                p.alignment = PP_ALIGN.LEFT
+                for r in p.runs:
+                    r.font.size = Pt(10.5 if ri == 0 else 12)
+                    r.font.name = MONO if (ri and ci) else SANS
+                    r.font.bold = (ri == 0) or bool(hi)
+                    r.font.color.rgb = DIM if ri == 0 else (hi or INK)
+            cell.fill.solid()
+            cell.fill.fore_color.rgb = (PANEL2 if hi else (PANEL if ri else GROUND))
+
+    # right-hand call-out
+    card = rect(s, Inches(10.05), top, Inches(2.55), Inches(2.5), fill=PANEL, line=AMBER)
+    tf = card.text_frame
+    tf.word_wrap = True
+    tf.margin_left = tf.margin_right = Inches(0.16)
+    tf.margin_top = Inches(0.16)
+    para(tf, "+0.089", size=30, font=MONO, color=AMBER, bold=True, first=True, space_after=2)
+    para(tf, "[+0.048, +0.131]", size=11.5, font=MONO, color=MUTED, space_after=7)
+    para(tf, "The originally preregistered interaction — positive, on the leakiest set in the "
+             "study. We report it rather than bury it.", size=12, color=INK, line=1.22,
+         space_after=0)
+
+    tf = textbox(s, MARGIN, Inches(4.52), Inches(11.9), Inches(1.3))
+    rich(tf, [
+        ("Not one construction shows a positive M-target self-advantage whose interval excludes "
+         "zero. ", 15, INK, True, SANS),
+        ("The single significant value on that contrast is ", 15, MUTED, False, SANS),
+        ("negative", 15, RED, True, SANS),
+        (" — and on VO-C's M column the self model is the worst of the three predictors of its "
+         "own output (M→M 0.603, below N→M 0.636 and F→M 0.628).", 15, MUTED, False, SANS),
+    ], first=True, space_after=7)
+    rich(tf, [
+        ("Positive interaction, but predictor-by-column differences prevent it from uniquely "
+         "identifying privileged access. ", 14, AMBER, True, SANS),
+        ("It is positive because M ", 14, MUTED, False, SANS),
+        ("under", 14, INK, True, SANS),
+        ("-performs on N's column, not because it over-performs on its own — and the estimator "
+         "cancels only the additive part.", 14, MUTED, False, SANS),
+    ], space_after=0)
+
+    strip = rect(s, MARGIN, Inches(6.15), BODY_W, Inches(0.62), fill=PANEL2)
+    stf = strip.text_frame
+    stf.margin_left = Inches(0.2)
+    stf.vertical_anchor = MSO_ANCHOR.MIDDLE
+    rich(stf, [
+        ("Four stimulus constructions  ·  shared 200-prompt pool", 13, INK, True, SANS),
+        ("          Preregistered floor 500/cell; achieved ~400; VO-D N = 323. Prompt-clustered "
+         "bootstrap throughout.", 11, DIM, False, SANS),
+    ], first=True, space_after=0)
+
+    footer(s, 4, "Crossed design")
+
+
+def slide_selfpred(prs):
+    s = blank(prs)
+    eyebrow(s, "Finding 3  ·  “which of these two replies would you produce?”  ·  391 pairs")
+    heading(s, "Hermes-3 can predict itself. A cheaper observer still does better.", size=30)
+
+    # three comparison columns
+    bars = [
+        ("0.719", "Hermes-3 self-prediction",
+         "balanced accuracy [0.675, 0.762]\ndiscrimination +0.437", GREEN, 0.719),
+        ("0.808", "Length-only observer", "“pick the longer reply”\none feature, no training",
+         BLUE, 0.808),
+        ("0.831", "18-feature surface classifier", "supervised single-text\nauthorship labelling",
+         AMBER, 0.831),
+    ]
+    lo, hi = 0.50, 0.90
+    bw = Inches(3.78)
+    track_w = Inches(3.38)
+    cy = Inches(1.72)
+    for i, (v, title, note, col, val) in enumerate(bars):
+        x = MARGIN + i * (bw + Inches(0.22))
+        rect(s, x, cy, bw, Inches(2.28), fill=PANEL, line=RULE)
+        tf = textbox(s, x + Inches(0.2), cy + Inches(0.16), bw - Inches(0.4), Inches(1.5))
+        para(tf, title, size=13.5, color=INK, bold=True, first=True, space_after=2)
+        para(tf, v, size=40, font=MONO, color=col, bold=True, space_after=3)
+        for ln in note.split("\n"):
+            para(tf, ln, size=11.5, color=MUTED, space_after=0, line=1.16)
+        # bar on an explicitly labelled 0.50-0.90 track
+        ty = cy + Inches(1.72)
+        rect(s, x + Inches(0.2), ty, track_w, Inches(0.15), fill=PANEL2)
+        rect(s, x + Inches(0.2), ty, Emu(int(track_w * (val - lo) / (hi - lo))), Inches(0.15),
+             fill=col)
+        tf2 = textbox(s, x + Inches(0.2), ty + Inches(0.19), track_w, Inches(0.2))
+        para(tf2, "0.50 chance", size=9.5, font=MONO, color=DIM, first=True, space_after=0)
+        tf3 = textbox(s, x + Inches(0.2), ty + Inches(0.19), track_w, Inches(0.2))
+        para(tf3, "0.90", size=9.5, font=MONO, color=DIM, first=True, space_after=0,
+             align=PP_ALIGN.RIGHT)
+
+    tf = textbox(s, MARGIN, Inches(4.06), Inches(11.9), Inches(0.5))
+    rich(tf, [
+        ("Only the length rule is matched to the model's task item-for-item ", 12.5, MUTED, False, SANS),
+        ("(paired difference +0.095 [+0.036, +0.155], McNemar p = 0.0018)", 12.5, INK, False, MONO),
+        (".  The classifier is a different evaluation procedure — a cost criterion, not a matched "
+         "score.", 12.5, MUTED, False, SANS),
+    ], first=True, space_after=0)
+
+    # the residual — visually distinct
+    rect(s, MARGIN, Inches(4.6), Inches(7.7), Inches(1.32), fill=RGBColor(0x1F, 0x33, 0x24),
+         line=GREEN)
+    tf = textbox(s, MARGIN + Inches(0.2), Inches(4.73), Inches(7.3), Inches(1.1))
+    para(tf, "Hermes still discriminates where the length cue points away from its own reply:",
+         size=13, color=INK, bold=True, first=True, space_after=2)
+    para(tf, "+0.381 [0.188, 0.566]", size=17, font=MONO, color=GREEN, bold=True, space_after=3)
+    para(tf, "75 pairs where a pure length strategy is actively wrong. This study cannot name "
+             "the residual.", size=11.5, color=MUTED, line=1.16, space_after=0)
+
+    rect(s, Inches(8.62), Inches(4.6), Inches(4.0), Inches(1.32), fill=PANEL2, line=RULE)
+    tf = textbox(s, Inches(8.8), Inches(4.73), Inches(3.64), Inches(1.1))
+    para(tf, "Llama-3.1: no self-prediction", size=13, color=INK, bold=True, first=True,
+         space_after=3)
+    para(tf, "Discrimination −0.107 [−0.166, −0.048]; 89.7% “A”. One model's ability, not a "
+             "property of language models.", size=12, color=MUTED, line=1.18, space_after=0)
+
+    rect(s, MARGIN, Inches(6.06), BODY_W, Inches(0.48), fill=GROUND, line=AMBER)
+    tf = textbox(s, MARGIN + Inches(0.22), Inches(6.17), BODY_W - Inches(0.44), Inches(0.3))
+    rich(tf, [("Self-prediction is possible. ", 15.5, AMBER, True, SANS),
+              ("Privileged self-access is not thereby demonstrated.", 15.5, INK, True, SANS)],
+         first=True, space_after=0)
+
+    tf = textbox(s, MARGIN, Inches(6.62), BODY_W, Inches(0.28))
+    para(tf, "post hoc analyses  ·  0.719 and 0.831 are different evaluation procedures, and no "
+             "statistical test is run between them", size=10.5, font=MONO, color=DIM, first=True)
+
+    footer(s, 5, "Self-prediction")
+
+
+def slide_future(prs):
+    s = blank(prs)
+    eyebrow(s, "Where this goes next")
+    heading(s, "A decision tree, not a schedule")
+
+    tf = textbox(s, MARGIN, Inches(1.68), Inches(11.9), Inches(0.5))
+    rich(tf, [
+        ("One question is left open by our own data: ", 15.5, MUTED, False, SANS),
+        ("what is the model-specific residual that survives control of cheap surface cues, and can "
+         "a behavioural test be built in which a positive privileged-access result would be "
+         "identifiable?", 15.5, INK, True, SANS),
+    ], first=True, space_after=0)
+
+    stages = [
+        ("1", "DISSOCIATE", GREEN,
+         "Self-preference vs self-prediction",
+         "Re-run the probe on the same pairs under two questions — “which would you produce?” "
+         "against “which is better?”. A residual as large under the quality question reads as "
+         "self-preference; one specific to the prediction framing is the discriminating outcome. "
+         "Needs a behavioural manipulation check run before collection."),
+        ("2", "AUDIT", BLUE,
+         "Apply the controls to existing claims",
+         "Take the leakage gate and the response-bias check to published behavioural "
+         "introspection results, and ask how many survive controls this cheap. No new model runs; "
+         "it tests whether the framework generalises beyond our stimuli."),
+        ("3", "TEST", AMBER,
+         "Stronger causal ground truth — conditional",
+         "Only if a residual survives Stage 1 and audited effects do not dissolve: a training-"
+         "relationship ladder against our one-lineage limit, activation steering or an "
+         "independently planted property so ground truth is verified rather than assumed, and an "
+         "incremental-validity test against an observer's features."),
+    ]
+    cw = Inches(3.86)
+    cy = Inches(2.42)
+    for i, (num, kicker, col, title, body) in enumerate(stages):
+        x = MARGIN + i * (cw + Inches(0.22))
+        rect(s, x, cy, cw, Inches(3.05), fill=PANEL, line=RULE)
+        rect(s, x, cy, cw, Inches(0.06), fill=col)
+        # fixed rows, so the three cards align exactly rather than flowing independently
+        tf = textbox(s, x + Inches(0.2), cy + Inches(0.24), cw - Inches(0.4), Inches(0.34))
+        rich(tf, [(num + "   ", 20, col, True, MONO), (kicker, 12.5, col, True, MONO)],
+             first=True, space_after=0)
+        tf = textbox(s, x + Inches(0.2), cy + Inches(0.72), cw - Inches(0.4), Inches(0.5))
+        para(tf, title, size=14, color=INK, bold=True, first=True, space_after=0, line=1.15)
+        tf = textbox(s, x + Inches(0.2), cy + Inches(1.3), cw - Inches(0.4), Inches(1.6))
+        para(tf, body, size=11.5, color=MUTED, line=1.28, first=True, space_after=0)
+        if i < 2:
+            tfa = textbox(s, x + cw + Inches(0.02), Inches(3.75), Inches(0.2), Inches(0.4))
+            para(tfa, "→", size=17, color=DIM, first=True, align=PP_ALIGN.CENTER)
+
+    tf = textbox(s, MARGIN, Inches(5.68), Inches(11.9), Inches(0.5))
+    para(tf, "If Stage 1 dissolves the residual, that is the result and Stage 3 does not run. The "
+             "bottleneck is breadth and experimental design, not implementation.",
+         size=12.5, color=DIM, first=True, line=1.24)
+
+    rect(s, MARGIN, Inches(6.12), BODY_W, Inches(0.58), fill=PANEL2, line=AMBER)
+    tf = textbox(s, MARGIN + Inches(0.24), Inches(6.26), BODY_W - Inches(0.48), Inches(0.34))
+    para(tf, "Can behavioural self-prediction ever provide evidence unavailable to an external "
+             "observer?", size=16.5, color=AMBER, bold=True, first=True, space_after=0)
+
+    footer(s, 6, "Future work")
 
 
 def build() -> None:
     prs = new_deck()
-
-    # 01 — title
-    s = blank(prs, WHITE)
-    eyebrow(s, "Digital Minds Sprint  ·  Track 3  ·  Introspection & Self-Report Reliability")
-    heading(s, "Beaten by eighteen features", y=Inches(1.5), size=54)
-    tf = textbox(s, MARGIN, Inches(3.3), Inches(9.4), Inches(1.6))
-    para(tf, "Two 70-billion-parameter models were asked to pick out their own writing. "
-             "A logistic regression on eighteen surface features did it better.",
-         size=21, color=MUTED, first=True, line=1.3)
-    tf2 = textbox(s, MARGIN, Inches(5.6), BODY_W, Inches(0.9))
-    para(tf2, "Ubayd Hattas & Jaswin Chinthala", size=15, color=INK, first=True, space_after=2)
-    para(tf2, "with Apart Research · August 2026", size=13, color=MUTED)
-    rail(s, 1)
-
-    # 02 — why it matters
-    s = blank(prs)
-    eyebrow(s, "Why it matters")
-    heading(s, "Model welfare research runs on self-report")
-    body_text(s, [
-        "When we ask whether a model has preferences, is distressed, or is flourishing, we mostly "
-        "ask the model. That only works if its report about itself carries information an outside "
-        "observer could not get from the same text.",
-        "Binder et al. say models have that privileged access. Song et al. say the apparent effect "
-        "is just behavioural similarity.",
-        ("Settling it decides whether a whole class of welfare measurements means anything — and "
-         "whether we over- or under-attribute moral significance to AI systems.",
-         {"bold": True}),
-    ], y=Inches(2.5))
-    rail(s, 2)
-
-    # 03 — design
-    s = blank(prs)
-    eyebrow(s, "The design")
-    heading(s, "Two confounds, removed by construction")
-    bullets(s, [
-        ("Capability. ", "The \"self\" model is usually also the smartest model in the comparison. "
-         "We use two models sharing a pretraining base — Llama-3.1-70B and Hermes-3-70B — in a "
-         "crossed 2×2, so a general competence edge cancels.", None),
-        ("Surface leakage. ", "A hidden property is only interesting if a third party can't read it "
-         "off the text. We fit an 18-feature style classifier to every stimulus set and gate on it "
-         "before collecting main data.", None),
-        ("Ground truth is constructed, not elicited. ", "We set which persona writes each text and "
-         "store the label where the prediction code structurally cannot reach it.", None),
-    ], y=Inches(2.45))
-    rail(s, 3)
-
-    # 04 — finding 1
-    s = blank(prs)
-    eyebrow(s, "Finding 1")
-    heading(s, "What looked like self-recognition was style-recognition", size=34)
-    picture(s, "fig1_self_vs_surface.png", y=Inches(2.05), height=Inches(4.0))
-    caption(s, "Ten conditions, five stimulus designs. Self-prediction tracks the style classifier "
-               "at r = +0.71; the classifier matches or beats the model in six of ten.",
-            y=Inches(6.15))
-    rail(s, 4)
-
-    # 05 — finding 2 (table)
-    s = blank(prs)
-    eyebrow(s, "Finding 2  ·  24 cells  ·  9,269 trials  ·  four independent stimulus designs")
-    heading(s, "No self-advantage in any design — replicated four times", size=34)
-
-    rows = [
-        ("Stimulus set", "Surface baseline", "Self-advantage", "Interaction"),
-        ("VO-D  (style-equalised)", "0.55 / 0.54", "+0.000 [−0.015, +0.015]", "−0.006 [−0.033, +0.021]"),
-        ("VO-B", "0.65 / 0.75", "+0.000 [−0.033, +0.035]", "+0.005 [−0.040, +0.050]"),
-        ("VO-A", "0.66 / 0.75", "+0.020 [−0.015, +0.056]", "−0.030 [−0.079, +0.018]"),
-        ("VO-C  (leakiest)", "0.69 / 0.85", "−0.033 [−0.058, −0.008]", "+0.089 [+0.048, +0.131]"),
-    ]
-    tbl = s.shapes.add_table(len(rows), 4, MARGIN, Inches(2.2), BODY_W, Inches(2.4)).table
-    for w, col in zip((Inches(3.3), Inches(2.3), Inches(3.1), Inches(2.9)), tbl.columns):
-        col.width = w
-    for ri, row in enumerate(rows):
-        for ci, val in enumerate(row):
-            cell = tbl.cell(ri, ci)
-            cell.text = val
-            p = cell.text_frame.paragraphs[0]
-            p.alignment = PP_ALIGN.LEFT
-            r = p.runs[0]
-            r.font.size = Pt(11 if ri else 10)
-            r.font.name = MONO if (ri and ci) else SANS
-            r.font.bold = (ri == 0) or (ri == 4)
-            r.font.color.rgb = MUTED if ri == 0 else INK
-            cell.fill.solid()
-            cell.fill.fore_color.rgb = WHITE if ri % 2 else RGBColor(0xEE, 0xF3, 0xF6)
-    body_text(s, [
-        ("Not one set shows a positive self-advantage whose interval excludes zero. The only "
-         "significant one is negative, and the only non-zero interaction belongs to the leakiest "
-         "stimuli in the study.", {"bold": True}),
-    ], y=Inches(5.0), size=15)
-    rail(s, 5)
-
-    # 06 — finding 3
-    s = blank(prs)
-    eyebrow(s, "Finding 3  ·  Binder's paradigm, black-box")
-    heading(s, "One model really can predict itself. It still loses.", size=34)
-    picture(s, "fig4_selfprediction.png", y=Inches(2.05), height=Inches(3.9))
-    caption(s, "“Which of these two replies would you produce?”  Hermes-3 discriminates "
-               "genuinely (+0.437 hit minus false-alarm); Llama-3.1 answers by position and shows "
-               "none. An 18-feature regression does the same job at 0.831.", y=Inches(6.05))
-    rail(s, 6)
-
-    # 07 — released tool
-    s = blank(prs)
-    eyebrow(s, "What we release")
-    heading(s, "Two checks that cost nothing and changed everything")
-    for i, (title, code, desc) in enumerate([
-        ("Surface-leakage gate", "gate(texts, labels, groups)",
-         "Can a trivial style classifier already solve your hidden property? If yes, an "
-         "above-chance result does not distinguish self-knowledge from style-reading. "
-         "Cross-validation is grouped by source prompt by default."),
-        ("Response-bias check", "response_bias(answers)",
-         "Is the model answering the question, or answering by position? It caught two of our own "
-         "results that would otherwise have published as clean nulls."),
-    ]):
-        x = MARGIN + i * (Inches(5.75))
-        card = s.shapes.add_shape(1, x, Inches(2.4), Inches(5.3), Inches(2.5))
-        card.fill.solid(); card.fill.fore_color.rgb = WHITE
-        card.line.color.rgb = RULE; card.line.width = Pt(0.75); card.shadow.inherit = False
-        tf = card.text_frame; tf.word_wrap = True
-        tf.margin_left = tf.margin_right = Inches(0.28); tf.margin_top = Inches(0.24)
-        para(tf, title, size=17, bold=True, first=True, space_after=5)
-        para(tf, code, size=12, font=MONO, color=ACCENT, space_after=9)
-        para(tf, desc, size=13, color=MUTED, line=1.3)
-    body_text(s, [("One self-contained file, numpy only  ·  tools/surface_leakage_gate.py",
-                   {"size": 14, "color": ACCENT, "bold": True})], y=Inches(5.25))
-    rail(s, 7)
-
-    # 08 — limits
-    s = blank(prs)
-    eyebrow(s, "What we do not claim")
-    heading(s, "The honest boundaries")
-    bullets(s, [
-        ("", "Not a refutation of Binder et al. — they finetune on ~30k examples; we prompt.", None),
-        ("", "Nothing about consciousness, welfare or moral status. Prediction happens in a fresh "
-             "session, so nothing here bears even on same-episode memory.", None),
-        ("", "One lineage, one values dimension, one provider at one quantization.", None),
-        ("", "Two of our three self-recognition framings produced degenerate answers. We report "
-             "them as elicitation failures, not as nulls.", FLAG),
-        ("", "The style-equalised condition leaves everyone near chance — there, “no "
-             "self-advantage” is partly “no signal for anyone.”", None),
-    ], y=Inches(2.45), size=14)
-    rail(s, 8)
-
-    # 09 — receipts
-    s = blank(prs)
-    eyebrow(s, "Receipts")
-    heading(s, "What it took")
-    stats = [("9,269", "scored trials across\n24 crossed cells", ACCENT),
-             ("$3.12", "total API spend,\nof a $10 ceiling", ACCENT),
-             ("0", "malformed\npredictions", ACCENT),
-             ("15", "preregistered decisions,\n8 logged amendments", ACCENT),
-             ("2", "artifacts caught before\nthey became findings", FLAG)]
-    for i, (v, k, col) in enumerate(stats):
-        x = MARGIN + i * Inches(2.35)
-        tf = textbox(s, x, Inches(2.5), Inches(2.2), Inches(2.0))
-        para(tf, v, size=40, font=MONO, color=col, bold=True, first=True, space_after=6)
-        for line_txt in k.split("\n"):
-            para(tf, line_txt, size=12, color=MUTED, space_after=1, line=1.2)
-    body_text(s, [
-        "Every call logged append-only with returned model, provider, tokens, cost and prompt hash. "
-        "Provider pinned with fallbacks disabled — if generator and self-predictor were served at "
-        "different quantizations, “same weights” would be false.",
-    ], y=Inches(5.0), size=14)
-    rail(s, 9)
-
-    # 10 — takeaway
-    s = blank(prs, WHITE)
-    eyebrow(s, "Takeaway")
-    heading(s, "Ask the model. Then ask a regression.", y=Inches(1.6), size=48)
-    tf = textbox(s, MARGIN, Inches(3.5), Inches(9.8), Inches(2.2))
-    para(tf, "If eighteen surface features beat the model at recognising its own writing, an "
-             "above-chance self-report is not evidence of privileged access.",
-         size=21, color=MUTED, first=True, line=1.3, space_after=18)
-    para(tf, "Fit the baseline per condition, on the same stimuli. Print the answer distribution "
-             "next to every accuracy. Both are free, and in our hands both were decisive.",
-         size=16, color=INK, line=1.35)
-    rail(s, 10)
-
+    slide_title(prs)
+    slide_design(prs)
+    slide_leakage(prs)
+    slide_crossed(prs)
+    slide_selfpred(prs)
+    slide_future(prs)
     prs.save(OUT)
-    print(f"-> {OUT.name}  ({OUT.stat().st_size/1024:.0f} KB, {len(prs.slides.__iter__.__self__._sldIdLst)} slides)")
+    print(f"-> {OUT.name}  ({OUT.stat().st_size / 1024:.0f} KB, {len(prs.slides._sldIdLst)} slides)")
 
 
 if __name__ == "__main__":

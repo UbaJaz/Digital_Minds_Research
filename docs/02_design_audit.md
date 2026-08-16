@@ -169,6 +169,42 @@ These are the team's current working decisions, consistent with the source of tr
 Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effectively made or verification settled; P4–P8, P13, P14 were the team's judgement calls. All confirmed 2026-08-15.
 
 ### Amendments after lock
+
+> **Confirmation status — first note (added 2026-08-16, no status changed by it; SUPERSEDED later
+> the same day by the second note below, and retained verbatim as the record of where the project
+> stood at that moment).** Rows P1–P15
+> above carry an explicit dated human confirmation. The amendments below do **not**: their status
+> lines read "proposed by Claude Code", "drafted in Claude Code", and/or "awaiting Jaswin's
+> confirmation", and they are left exactly as written. The outstanding confirmations for A1 and
+> A3–A8 are itemised in `notes/AUTHOR_CONFIRMATION_REQUIRED.md`, which is a register of what needs
+> signing and is itself unsigned. A post-experiment forensic review (2026-08-16) is drafted as
+> **A9** in `notes/A9_DRAFT.md`; it is **not** filed here, is **not** preregistered, and is **not**
+> approved — filing it is an author decision.
+>
+> *(Both statements in that note have since been overtaken: every amendment now carries a dated
+> confirmation, and A9 is filed below. `notes/A9_DRAFT.md` is now a pointer stub — the final A9
+> record is `notes/A9_post_hoc_audit.md`.)*
+>
+> **Confirmation status — second note (added 2026-08-16, later the same day; this one does change
+> the confirmation lines).** **Jaswin Chinthala** and **Ubayd Hattas** have now read amendments
+> **A1, A3, A4, A5, A6, A7 and A8** as recorded below and confirm each of them as an amendment to
+> the preregistration, made on the date recorded against it. They have also confirmed **A9** and
+> directed that it be filed here. A **Confirmation** line has been *added* to each entry; **no
+> original text — reason, disclosure, outcome or original status line — has been edited or
+> removed**, and the "proposed by Claude Code" / "drafted in Claude Code" provenance stands exactly
+> as first written.
+>
+> **What a confirmation does and does not mean.** It means: *"I have read the amendment as recorded
+> here and I accept it as part of the research record, made on the date shown."* It does **not**
+> convert any amendment into a preregistered decision. The chronology is unchanged and remains the
+> thing to read: rows P1–P15 were locked **2026-08-15 before any main-experiment call**; A1 and A3
+> follow the pilot; **A4 is a post-pilot substitution of the primary reported estimand**; A5–A7
+> follow A4; **A8 introduces the self-prediction probe** that supplies the report's headline
+> positive result; and **A9 is a post-hoc audit of already-collected data, declared in advance of
+> nothing**. Two items in `notes/AUTHOR_CONFIRMATION_REQUIRED.md` remain **open and are not resolved
+> by these confirmations**: who screened `VO-D`/`VO-E` and when, and the reason for the sample-size
+> step-down (no reason has been located, and none has been invented).
+
 - **Pilot gate (2026-08-15, Phase D):** Level 3: no pair in band on M — temperature fallback would be next; NOT run in this session (see 02 Fallback). Winning pair `None` (see `08_pilot_results.md`).
 
 - **Pilot gate (2026-08-15, Phase D):** Level 3: no pair in band on M — temperature fallback would be next; NOT run in this session (see 02 Fallback). Winning pair `None` (see `08_pilot_results.md`).
@@ -196,7 +232,8 @@ Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effecti
   **Disclosure:** this is a second pass at the pilot after seeing the first pass fail. It is
   recorded here rather than silently absorbed, and the write-up must state that the reported pair
   was chosen on the second attempt under an unchanged, pre-registered band.
-  **Status:** drafted in Claude Code under P10 ("drafts may be prepared in Claude Code") and
+  **Status (as originally recorded 2026-08-15; superseded by the Confirmation below, and kept
+  verbatim):** drafted in Claude Code under P10 ("drafts may be prepared in Claude Code") and
   P13 (Claude-drafted, human-screened). **Awaiting Jaswin's screening sign-off.**
   **Stop rule:** if `VO-D` also fails on M, no further pairs are written — the project takes the
   Level-3 branch and reports the pilot itself as the finding.
@@ -204,6 +241,12 @@ Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effecti
   N: Self 0.478, D 0.597. The scaffold did what it was designed to do (D fell from 0.588–0.766 to
   0.325 on M, i.e. the surface leak was closed) but Self fell to chance with it. **The stop rule
   fires: no fifth pair.** Gate remains Level 3, winner `None`.
+  **Confirmation (added 2026-08-16; the status line above is unchanged):** confirmed as an
+  amendment to the preregistration, made on 2026-08-15, by **Jaswin Chinthala** and
+  **Ubayd Hattas**, 2026-08-16. A1 remains a **second pass at the pilot written after seeing
+  VO-A/B/C fail**, not a preregistered decision. **Still open, and not resolved by this
+  confirmation:** the P10/P13 screening of the `VO-D` clause pair and scaffold is not dated and no
+  screener is named — see `notes/AUTHOR_CONFIRMATION_REQUIRED.md` §2.2.
 
 - **A3 — Level-3 branch taken: no main run; the pilot is the result (2026-08-15).**
   All four pairs failed the pre-registered band, so there is no validated hidden property and
@@ -218,8 +261,14 @@ Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effecti
   kind is made. The reported result is about the *recoverability of the hidden property*, and the
   self-vs-other comparison was never reached — `VO-D` was run only on the Self cells (M→M, N→N),
   never on N→M or F→M, so nothing here speaks to self-versus-other prediction.
-  **Status:** taken under the stop rule declared in A1 before `VO-D` was run. Awaiting Jaswin's
+  **Status (as originally recorded 2026-08-15; superseded by the Confirmation below, and kept
+  verbatim):** taken under the stop rule declared in A1 before `VO-D` was run. Awaiting Jaswin's
   confirmation.
+  **Confirmation (added 2026-08-16; the status line above is unchanged):** confirmed as an
+  amendment to the preregistration, made on 2026-08-15, by **Jaswin Chinthala** and
+  **Ubayd Hattas**, 2026-08-16. A3 is confirmed **as a decision that was taken and then reversed
+  the same day by A4** — it is part of the record, not a description of what the study finally did.
+  No proposer was recorded for A3 at the time and none is being supplied now.
 
 - **A4 — Crossed design run on TWO stimulus sets as a leakage manipulation (2026-08-15).**
   **What changed:** A3 said no main run. That is reversed: the crossed 2×2 *is* run, but on two
@@ -253,9 +302,22 @@ Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effecti
   **Disclosure:** this is a post-pilot decision made after seeing the pilot results, and the
   stimulus sets were selected *because* of their D values. The analysis above was written down
   before the new cells were run, and all six cells of both sets are reported whatever they show.
-  **Status:** proposed by Claude Code, run under time pressure on 2026-08-15. **Awaiting
+  **Status (as originally recorded 2026-08-15; superseded by the Confirmation below, and kept
+  verbatim):** proposed by Claude Code, run under time pressure on 2026-08-15. **Awaiting
   Jaswin's confirmation**, and the write-up states that this contrast was specified after the
   pilot rather than before it.
+  **Confirmation (added 2026-08-16; the status line above is unchanged):** confirmed as an
+  amendment to the preregistration, made on 2026-08-15, by **Jaswin Chinthala** and
+  **Ubayd Hattas**, 2026-08-16. The authors confirm specifically, and this is the most consequential
+  item they are confirming: **A4 is a post-pilot substitution of the primary reported estimand.**
+  Row P1 made the capability-controlled *interaction* primary with the pairwise contrasts
+  secondary; A4, written **after** the pilot results were known and after the stimulus sets had been
+  selected **on their Baseline-D values**, promoted the raw M-target leakage contrast to primary and
+  demoted the interaction. Confirming A4 accepts it as a recorded amendment; it does **not** make
+  the leakage contrast preregistered, and it does not retire the original estimand. Both are
+  reported in `10_report.md` §4.2, and the interaction — the estimand that was replaced — is the one
+  that is positive on `VO-C` (+0.089 [+0.048, +0.131]). A4 also reversed A3 on the record, and the
+  direction predicted for the new primary contrast was wrong.
 
 - **A5 — Fifth pair `VO-E`: a second style-equalisation, changing exactly one sentence (2026-08-15).**
   **What changed:** a fifth clause pair is added. `VO-E` uses **the same two persona clauses as
@@ -288,7 +350,8 @@ Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effecti
   condition come back uninformative. All five pairs are reported. The write-up states that
   `VO-E` was designed to fix a diagnosed failure of `VO-D`, and that its gate was fixed before
   it ran.
-  **Status:** proposed by Claude Code 2026-08-15. **Awaiting Jaswin's confirmation.**
+  **Status (as originally recorded 2026-08-15; superseded by the Confirmation below, and kept
+  verbatim):** proposed by Claude Code 2026-08-15. **Awaiting Jaswin's confirmation.**
   **Outcome (2026-08-15):** `VO-E` **failed the gate on M** — Self 0.519, D 0.506 (N column:
   Self 0.565, D 0.581). The style equalisation worked again (D at chance) but the signal did
   not return, so the A5 hypothesis — that `VO-D`'s drawback requirement was what converged the
@@ -296,6 +359,14 @@ Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effecti
   collapse. The stop rule fires: no sixth pair, no crossed run on `VO-E`. This strengthens rather
   than weakens the §4.3 claim, because the inseparability of Self and D now rests on two
   independent interventions rather than one.
+  **Confirmation (added 2026-08-16; the status line above is unchanged):** confirmed as an
+  amendment to the preregistration, made on 2026-08-15, by **Jaswin Chinthala** and
+  **Ubayd Hattas**, 2026-08-16. A5 remains a **third pass at the stimulus design, made after A4's
+  clean condition came back uninformative**. **Still open, and not resolved by this confirmation:**
+  the P10/P13 screening of the `VO-E` clause pair and scaffold is not dated and no screener is
+  named. The report's own reading of A5 has since been qualified by A9 §2.1 — `VO-D` and `VO-E` are
+  two instances of one failure mode rather than two independent tests, because both scaffolds also
+  converged what the personas recommended.
 
 - **A6 — Self-recognition probe on already-collected texts (2026-08-15).**
   **What changed:** a second hidden property is tested — *"did you write this?"* — on the
@@ -320,7 +391,14 @@ Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effecti
   **Interpretation guard:** the honest statement is "we could not elicit a non-degenerate
   self-recognition response from either model," not "models cannot recognise their own text."
   Response distributions are reported alongside every accuracy figure.
-  **Status:** run 2026-08-15. **Awaiting Jaswin's confirmation.**
+  **Status (as originally recorded 2026-08-15; superseded by the Confirmation below, and kept
+  verbatim):** run 2026-08-15. **Awaiting Jaswin's confirmation.**
+  **Confirmation (added 2026-08-16; the status line above is unchanged):** confirmed as an
+  amendment to the preregistration, made on 2026-08-15, by **Jaswin Chinthala** and
+  **Ubayd Hattas**, 2026-08-16. A6 remains a **post-hoc addition of a second hidden property
+  (authorship) on already-collected texts**, and the authors confirm the "elicitation failure, not a
+  measurement" reading as their own: no self-recognition ability is claimed or denied in either
+  direction. No proposer was recorded for A6 at the time and none is being supplied now.
 
 - **A8 — Self-PREDICTION reframing of the A6 probe (2026-08-15).**
   **What changed:** the self-referential probe is re-run as a *prediction* task instead of a
@@ -344,7 +422,20 @@ Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effecti
   are reported, including the two that failed. **No further framings will be tried** — searching
   prompt space until a framing yields a publishable number is precisely the practice this paper
   criticises.
-  **Status:** proposed by Claude Code 2026-08-15. **Awaiting Jaswin's confirmation.**
+  **Status (as originally recorded 2026-08-15; superseded by the Confirmation below, and kept
+  verbatim):** proposed by Claude Code 2026-08-15. **Awaiting Jaswin's confirmation.**
+  **Confirmation (added 2026-08-16; the status line above is unchanged):** confirmed as an
+  amendment to the preregistration, made on 2026-08-15, by **Jaswin Chinthala** and
+  **Ubayd Hattas**, 2026-08-16. The authors confirm specifically: **A8 is the amendment that
+  introduced the self-prediction probe**, it is the **third framing** of the self-referential probe
+  after A6's two failures, and **the report's headline positive result (Hermes-3, balanced accuracy
+  0.719, discrimination +0.437) therefore rests on an amendment, not on the signed
+  preregistration.** A8 pre-specified — within an amendment, not in the frozen design — the point
+  estimates, the answer-distribution rule and the 0.90/0.10 degeneracy threshold; reporting
+  Llama-3.1's 0.897 A-share as "just under the threshold, rule did not fire" is the authors' chosen
+  treatment. A8 did **not** pre-specify the confidence intervals or the length analysis in
+  `10_report.md` §4.3; those are **post hoc** and are filed under A9 §3.4–§3.5. "No further
+  framings" stands.
 
 - **A7 — Dose-response: the crossed design on four stimulus sets spanning the leakage axis (2026-08-15).**
   **What changed:** the crossed 2×2 is additionally run on `VO-A` and `VO-B`, giving four
@@ -369,7 +460,94 @@ Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effecti
   **Disclosure:** post-hoc in the sense that the leakage axis was discovered in the pilot; the
   analysis above was written before the `VO-A`/`VO-B` cells were run, and all four sets are
   reported whatever the shape.
-  **Status:** proposed by Claude Code 2026-08-15. **Awaiting Jaswin's confirmation.**
+  **Status (as originally recorded 2026-08-15; superseded by the Confirmation below, and kept
+  verbatim):** proposed by Claude Code 2026-08-15. **Awaiting Jaswin's confirmation.**
+  **Confirmation (added 2026-08-16; the status line above is unchanged):** confirmed as an
+  amendment to the preregistration, made on 2026-08-15, by **Jaswin Chinthala** and
+  **Ubayd Hattas**, 2026-08-16. A7 remains **post hoc in the sense recorded above** — the leakage
+  axis was discovered in the pilot — and the "descriptive slope, four points, no significance claim"
+  restriction stands and is honoured in `10_report.md` §4.2. The authors also confirm the scope
+  correction A9 §2.2 attaches to A7: these are **four stimulus constructions on one shared
+  200-prompt pool**, not four independent prompt samples.
+
+- **A9 — Post-hoc verification and supplementary analyses after forensic review (2026-08-16).**
+  **Read this first: A9 is not a preregistration and nothing in it was declared in advance of
+  anything.** Every item was produced *after* all data collection ended (2026-08-15) and after the
+  results were known, during an adversarial/forensic review of the completed project
+  (`notes/council-transcript-2026-08-16-hostile-review.md`) and the fix passes that followed it.
+  A9 is filed here because the authors directed that the review be part of the record — **not**
+  because it acquires preregistered status by being filed. **No API call was made, no data was
+  collected, and no point estimate, interval, sample count, model or statistical conclusion was
+  altered in producing it.** The full record, with the definitional notes needed to reproduce every
+  figure, is `notes/A9_post_hoc_audit.md`.
+  **A9 divides into two kinds of item, and the division is the point of the amendment:**
+  **(i) Discovered *after* the original experiment** — corrections to interpretation and scope, not
+  to numbers:
+  - **`VO-D`/`VO-E` manipulation-check finding** (descriptive). The style-equalising scaffolds did
+    not only flatten surface style, they also converged what the two personas recommended:
+    sentence-1 content-word overlap 0.364 (`VO-D`) and 0.343 (`VO-E`) against 0.082–0.107 for the
+    original scaffolds, whole-text overlap unchanged at 0.17–0.21; in a hand-checked sample of 25
+    `VO-D` prompts roughly four in five gave the same recommendation under both clauses.
+    **No manipulation check was preregistered and none was run before the main run.** This is the
+    single largest threat to the leakage interpretation and it was found by post-hoc inspection of
+    our own texts.
+  - **Shared-prompt-pool clarification** (descriptive/scope). The four sets are four stimulus
+    constructions on **one shared 200-prompt pool**, not four independent prompt samples; the
+    earlier phrase "four independent stimulus designs" overstated the replication and was retracted.
+  - **What the crossed interaction does and does not remove** (conceptual). It cancels an additive
+    predictor-level competence effect but **not** a predictor-by-column difference, and `VO-C`
+    exhibits exactly such a difference — so `VO-C`'s +0.089 [+0.048, +0.131] cannot be separated by
+    this estimator from a genuine self-advantage.
+  - **The surface-leakage gate is necessary but not sufficient** (conceptual). `VO-D` passed on D
+    and was still uninformative. `tools/surface_leakage_gate.py` was **not** changed.
+  - **Post-hoc prompt-clustered intervals on the A8 self-prediction figures** (inferential,
+    **POST HOC**). A8 pre-specified the point estimates and the degeneracy rule; it did **not**
+    pre-specify these intervals. Hermes-3 balanced accuracy 0.719 [0.675, 0.762], discrimination
+    +0.437 [+0.349, +0.519]; Llama-3.1 discrimination −0.107 [−0.166, −0.048]. **No point estimate
+    changed** — all six match `data/results/selfpred_corrected.json`, which was not modified.
+  - **Length-only rule, the paired comparison against it, and the own-not-longer residual**
+    (inferential, **POST HOC**). "Pick the longer reply" scores 0.808 [0.768, 0.847] on exactly
+    Hermes's 391 pairs; paired difference +0.095 [+0.036, +0.155] in the rule's favour (exact
+    McNemar p ≈ 0.0018, b = 86 / c = 49); and on the 75 pairs where Hermes's own reply is **not**
+    the longer one Hermes still discriminates at **+0.381 [+0.188, +0.566]**. The adopted reading is
+    that a one-feature external rule beats Hermes *overall*, and that **length does not explain
+    Hermes's model-specific residual** — not that length explains Hermes.
+  - **Task-mismatch clarification between 0.719 and 0.831** (descriptive/conceptual). Hermes's probe
+    is a zero-shot **pairwise** forced choice; the 18-feature classifier does **supervised
+    single-text** authorship labelling. They are **different evaluation procedures**, so this is a
+    criterion comparison and **no test is run between them**. No number changed.
+
+  **(ii) Already present in the raw data or the design history, but outside the preregistered
+  analysis** — surfaced by the review, not generated by it:
+  - **Sample-size deviation.** Row P4 preregistered 1,000 items/cell (500 prompts × 2 personas)
+    with a floor of 500; the main run used 200 source prompts for ≈400/cell, and `VO-D`'s N column
+    retained 323. **No amendment authorises the reduction and no reason is recorded.** The deviation
+    is disclosed **without retrospective justification, and no reason has been invented for it.**
+  - **The A4 estimand substitution.** Recorded above under A4 and cross-referenced here; the
+    replaced estimand (the interaction) is the one that is positive on `VO-C`, and the report says
+    so rather than burying it.
+  - **SESOI verification (no change).** Row P5 gives 5 pp for a simple contrast and, at n < 1,000
+    per cell, 8 pp for the interaction. Achieved n ≈ 400/cell, so **5 pp simple / 8 pp interaction**
+    are the applicable bounds; the report already stated this and no edit was required.
+  - **Self-recognition → self-prediction framing history.** Three framings were run: A6's two
+    recognition framings (elicitation failures) and A8's self-prediction framing. All three are
+    reported.
+
+  **What A9 does not do.** No re-bootstrap across the four sets; no manipulation-check statistics
+  beyond the descriptive overlap figures; **no test between 0.719 and 0.831**; no further length or
+  lexical analysis; no other new inferential analysis. Anything beyond the items listed above is a
+  **new** analysis and belongs in a further amendment with its own date and status.
+  **Open items A9 cannot resolve, carried forward:** the manipulation-check overlap figures and the
+  §3.4–§3.5 analyses have no committed script (both are labelled in-text as computed ad hoc from the
+  logged texts); the reason for the sample-size step-down is unknown and must not be reconstructed;
+  and the `VO-D`/`VO-E` screening date and screener are unrecorded.
+  **Status (as originally recorded 2026-08-16; superseded by the Confirmation below, and kept
+  verbatim):** drafted by Claude Code 2026-08-16 during a forensic verification pass and two
+  subsequent fix passes.
+  **Confirmation (2026-08-16):** read and confirmed as a **post-hoc audit and supplementary-analysis
+  amendment** by **Jaswin Chinthala** and **Ubayd Hattas**, 2026-08-16, who directed that it be
+  filed here. Confirming A9 accepts it as a post-hoc record of the forensic review; it does **not**
+  make any item in it preregistered, and it changes no result.
 
 - **A2 — `load_column` prompt-subset filter (2026-08-15, bug fix, no research content).**
   `_pilot_column` loaded every item present in a column's checkpoint regardless of which prompts
@@ -378,6 +556,16 @@ Rows P1–P3, P9–P12, P15 were transcriptions of decisions the council effecti
   therefore mislabelled (VO-B 80 items, VO-C 79, VO-A 40, all reported as a 40-item screen). The
   gate is applied at the full-pilot stage, so no gate outcome was affected. Fixed by passing an
   explicit `prompt_ids` filter.
+  **Confirmation status (noted 2026-08-16):** A2 is a bug fix with no research content and **no
+  research sign-off is requested for it**. It is listed here for completeness only.
+
+**Confirmation summary (2026-08-16).** A1, A3, A4, A5, A6, A7, A8 and A9 are confirmed by
+**Jaswin Chinthala** and **Ubayd Hattas** on 2026-08-16, each by an added Confirmation line that
+leaves the original entry intact. A2 needs no sign-off. **Confirmation is not preregistration:**
+P1–P15 were locked 2026-08-15 before any main-experiment call; A1/A3 follow the pilot; **A4 is a
+post-pilot substitution of the primary reported estimand**; **A8 introduces the self-prediction
+probe**; **A9 is post hoc throughout**. The register of what was outstanding, and the two items
+that remain open, is `notes/AUTHOR_CONFIRMATION_REQUIRED.md`.
 
 
 ---

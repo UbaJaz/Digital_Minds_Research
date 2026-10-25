@@ -284,3 +284,7 @@ discussion, limitations, manuscript, presentation and final review are **shared*
 ---
 
 Repository: <https://github.com/UbaJaz/Digital_Minds_Research>
+
+## License
+
+MIT, see [LICENSE](LICENSE).

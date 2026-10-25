@@ -35,6 +35,8 @@ Reliability), 14–16 August 2026
 
 Total API spend: **$3.12** of a $10 ceiling.
 
+![Self-prediction accuracy tracks the surface-feature baseline across the ten pilot column-results](figures/fig1_self_vs_surface.png)
+
 ## Research question
 
 **Does a model's prediction about its own behaviour carry information that an equal-or-lower-cost
